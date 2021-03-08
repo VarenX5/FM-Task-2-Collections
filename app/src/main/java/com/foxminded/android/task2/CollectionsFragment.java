@@ -33,7 +33,6 @@ public class CollectionsFragment extends Fragment {
 
         mRecyclerView = mBinding.myRecyclerView;
         mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getActivity());
         mCollectionsList = new ArrayList<OperationItem>();
         createOperationsList();
         mAdapter = new MyRecyclerAdapter(mCollectionsList);

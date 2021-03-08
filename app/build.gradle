@@ -7,6 +7,7 @@ android {
     buildToolsVersion "29.0.3"
     buildFeatures {
         viewBinding true
+
     }
     defaultConfig {
         applicationId "com.foxminded.android.task2"
