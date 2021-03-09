@@ -1,6 +1,7 @@
 package com.foxminded.android.task2;
 
 import android.os.Bundle;
+
 import com.foxminded.android.task2.ui.main.MyPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 

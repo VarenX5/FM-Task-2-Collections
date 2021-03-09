@@ -13,12 +13,9 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.foxminded.android.task2.databinding.FragmentCollectionsBinding;
-import com.foxminded.android.task2.databinding.FragmentMapsBinding;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -30,7 +27,6 @@ public class MapsFragment extends Fragment {
     private FragmentCollectionsBinding mBinding;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<OperationItem> mCollectionsList;
 
     @Nullable
@@ -85,7 +81,7 @@ public class MapsFragment extends Fragment {
     }
 
     private void startOfOperationsList() {
-        //start of Progress bar animation only for HashMap cause TreeMap not ready
+        //start of Progress bar animation only for HashMap cause TreeMap is not ready yet
         mCollectionsList.set(0, new OperationItem("Adding to TreeMap: ", "N/A ms", false));
         mCollectionsList.set(1, new OperationItem("Adding to HashMap: ", "N/A ms", true));
 
@@ -99,9 +95,9 @@ public class MapsFragment extends Fragment {
     private void startOfExecution() {
         ExecutorService executor = Executors.newFixedThreadPool(Integer.parseInt(mBinding.editTextThreads.getText().toString()));
 
-        Callable<Double> callable1 = new MyCallable(Integer.parseInt(mBinding.editTextOperations.getText().toString()), 0);
-        Callable<Double> callable2 = new MyCallable(Integer.parseInt(mBinding.editTextOperations.getText().toString()), 1);
-        Callable<Double> callable3 = new MyCallable(Integer.parseInt(mBinding.editTextOperations.getText().toString()), 2);
+        Callable<Double> callable1 = new HashMapCallable(Integer.parseInt(mBinding.editTextOperations.getText().toString()), 0);
+        Callable<Double> callable2 = new HashMapCallable(Integer.parseInt(mBinding.editTextOperations.getText().toString()), 1);
+        Callable<Double> callable3 = new HashMapCallable(Integer.parseInt(mBinding.editTextOperations.getText().toString()), 2);
 
         Future<Double> future1 = executor.submit(callable1);
         Future<Double> future2 = executor.submit(callable2);
@@ -134,12 +130,13 @@ public class MapsFragment extends Fragment {
 
     }
 
-    public class MyCallable implements Callable<Double> {
+    //And i think it might be better to move it to standalone class
+    public class HashMapCallable implements Callable<Double> {
 
         private final Integer mOperations;
         private final Integer mNumberOfOperation;
 
-        public MyCallable(int operations, int numOfOperation) {
+        public HashMapCallable(int operations, int numOfOperation) {
             mOperations = operations;
             mNumberOfOperation = numOfOperation;
         }

@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.foxminded.android.task2.databinding.FragmentCollectionsBinding;
@@ -43,7 +42,7 @@ public class CollectionsFragment extends Fragment {
         mBinding.startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCollectionsList.set(0,new OperationItem("Adding to start in ArrayList: ","1 ms", true));
+                mCollectionsList.set(0, new OperationItem("Adding to start in ArrayList: ", "1 ms", true));
                 mAdapter.notifyItemChanged(0);
             }
         });
