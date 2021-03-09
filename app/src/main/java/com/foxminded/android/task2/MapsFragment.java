@@ -85,14 +85,15 @@ public class MapsFragment extends Fragment {
     }
 
     private void startOfOperationsList() {
-        mCollectionsList.set(0, new OperationItem("Adding to TreeMap: ", "N/A ms", true));
-        mCollectionsList.set(1, new OperationItem("Adding to HashMap: ", "N/A ms", false));
+        //start of Progress bar animation only for HashMap cause TreeMap not ready
+        mCollectionsList.set(0, new OperationItem("Adding to TreeMap: ", "N/A ms", false));
+        mCollectionsList.set(1, new OperationItem("Adding to HashMap: ", "N/A ms", true));
 
-        mCollectionsList.set(2, new OperationItem("Search in TreeMap: ", "N/A ms", true));
-        mCollectionsList.set(3, new OperationItem("Search in HashMap: ", "N/A ms", false));
+        mCollectionsList.set(2, new OperationItem("Search in TreeMap: ", "N/A ms", false));
+        mCollectionsList.set(3, new OperationItem("Search in HashMap: ", "N/A ms", true));
 
-        mCollectionsList.set(4, new OperationItem("Removing from TreeMap: ", "N/A ms", true));
-        mCollectionsList.set(5, new OperationItem("Removing from HashMap: ", "N/A ms", false));
+        mCollectionsList.set(4, new OperationItem("Removing from TreeMap: ", "N/A ms", false));
+        mCollectionsList.set(5, new OperationItem("Removing from HashMap: ", "N/A ms", true));
     }
 
     private void startOfExecution() {
@@ -109,16 +110,16 @@ public class MapsFragment extends Fragment {
         while (true) {
             try {
                 if (!future1.isDone()) {
-                    mCollectionsList.set(0, new OperationItem("Adding to TreeMap: ", future1.get().toString() + " ms", false));
-                    mAdapter.notifyItemChanged(0);
+                    mCollectionsList.set(1, new OperationItem("Adding to HashMap: ", future1.get().toString() + " ms", false));
+                    mAdapter.notifyItemChanged(1);
                 }
                 if (!future2.isDone()) {
-                    mCollectionsList.set(2, new OperationItem("Search in TreeMap: ", future2.get().toString() + " ms", false));
-                    mAdapter.notifyItemChanged(2);
+                    mCollectionsList.set(3, new OperationItem("Search in HashMap: ", future2.get().toString() + " ms", false));
+                    mAdapter.notifyItemChanged(3);
                 }
                 if (!future3.isDone()) {
-                    mCollectionsList.set(4, new OperationItem("Removing from TreeMap: ", future3.get().toString() + " ms", false));
-                    mAdapter.notifyItemChanged(4);
+                    mCollectionsList.set(5, new OperationItem("Removing from HashMap: ", future3.get().toString() + " ms", false));
+                    mAdapter.notifyItemChanged(5);
                 }
 
                 if (future1.isDone() && future2.isDone() && future3.isDone()) {
