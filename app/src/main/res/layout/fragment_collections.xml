@@ -37,6 +37,7 @@
         android:layout_marginTop="4dp"
         android:ems="10"
         android:inputType="numberDecimal"
+        android:digits="1234567890"
         app:layout_constraintEnd_toStartOf="@+id/startButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -49,6 +50,7 @@
         android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="numberDecimal"
+        android:digits="1234567890"
         app:layout_constraintEnd_toStartOf="@+id/startButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextOperations" />
