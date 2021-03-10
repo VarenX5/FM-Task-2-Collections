@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,12 +31,17 @@ public class MapsFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private ArrayList<OperationItem> mCollectionsList;
+    private ExecutorService mExecutorService;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentCollectionsBinding.inflate(inflater, container, false);
+        return mBinding.getRoot();
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         mRecyclerView = mBinding.myRecyclerView;
         mRecyclerView.setHasFixedSize(true);
         mCollectionsList = new ArrayList<OperationItem>();
@@ -45,30 +51,33 @@ public class MapsFragment extends Fragment {
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         mRecyclerView.setAdapter(mAdapter);
 
-        mBinding.startButton.setOnClickListener(new View.OnClickListener() {
+        mBinding.startButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                String numOfOperation = mBinding.editTextOperations.getText().toString();
-                String numOfThreads = mBinding.editTextThreads.getText().toString();
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    String numOfOperation = mBinding.editTextOperations.getText().toString();
+                    String numOfThreads = mBinding.editTextThreads.getText().toString();
 
-                if ((numOfOperation.equals("0")) | (numOfOperation.isEmpty())) {
-                    Toast.makeText(getActivity(), getString(R.string.message_need_more_than_zero_operations), Toast.LENGTH_LONG).show();
-                    mBinding.editTextOperations.setText("");
-                } else if ((numOfThreads.equals("0")) | (numOfThreads.isEmpty())) {
-                    Toast.makeText(getActivity(), getString(R.string.message_need_more_than_zero_threads), Toast.LENGTH_LONG).show();
-                    mBinding.editTextThreads.setText("");
+                    if ((numOfOperation.equals("0")) | (numOfOperation.isEmpty())) {
+                        Toast.makeText(getActivity(), getString(R.string.message_need_more_than_zero_operations), Toast.LENGTH_LONG).show();
+                        mBinding.editTextOperations.setText("");
+                    } else if ((numOfThreads.equals("0")) | (numOfThreads.isEmpty())) {
+                        Toast.makeText(getActivity(), getString(R.string.message_need_more_than_zero_threads), Toast.LENGTH_LONG).show();
+                        mBinding.editTextThreads.setText("");
+                    } else {
+                        startOfOperationsList();
+                        mAdapter.notifyDataSetChanged();
+                        startOfExecution();
+                    }
                 } else {
-                    startOfOperationsList();
-                    mAdapter.notifyDataSetChanged();
-                    startOfExecution();
+                    shutdownExecution();
 
                 }
 
-
             }
         });
-        return mBinding.getRoot();
     }
+
 
     public static MapsFragment newInstance() {
         return new MapsFragment();
@@ -78,36 +87,26 @@ public class MapsFragment extends Fragment {
         Resources res = getResources();
         String[] operations = res.getStringArray(R.array.name_of_map_operations);
         String ms = getString(R.string.n_a_ms);
-        mCollectionsList.add(new OperationItem(operations[0], ms, false));
-        mCollectionsList.add(new OperationItem(operations[1], ms, false));
-
-        mCollectionsList.add(new OperationItem(operations[2], ms, false));
-        mCollectionsList.add(new OperationItem(operations[3], ms, false));
-
-        mCollectionsList.add(new OperationItem(operations[4], ms, false));
-        mCollectionsList.add(new OperationItem(operations[5], ms, false));
+        for (int i = 0; i < 6; i++) {
+            mCollectionsList.add(new OperationItem(operations[i], ms, false));
+        }
     }
 
     private void startOfOperationsList() {
         Resources res = getResources();
         String[] operations = res.getStringArray(R.array.name_of_map_operations);
         String ms = getString(R.string.n_a_ms);
-        mCollectionsList.set(0, new OperationItem(operations[0], ms, true));
-        mCollectionsList.set(1, new OperationItem(operations[1], ms, true));
-
-        mCollectionsList.set(2, new OperationItem(operations[2], ms, true));
-        mCollectionsList.set(3, new OperationItem(operations[3], ms, true));
-
-        mCollectionsList.set(4, new OperationItem(operations[4], ms, true));
-        mCollectionsList.set(5, new OperationItem(operations[5], ms, true));
+        for (int i = 0; i < 6; i++) {
+            mCollectionsList.set(i, new OperationItem(operations[i], ms, true));
+        }
         mAdapter.notifyDataSetChanged();
     }
 
     private void startOfExecution() {
-        ExecutorService executor = Executors.newFixedThreadPool(Integer.parseInt(mBinding.editTextThreads.getText().toString()));
+        mExecutorService = Executors.newFixedThreadPool(Integer.parseInt(mBinding.editTextThreads.getText().toString()));
         ArrayList<Future<Double>> futureArrayList = new ArrayList<>();
         ArrayList<Callable<Double>> callableArrayList = new ArrayList<>();
-        Integer amountOfElements = Integer.parseInt(mBinding.editTextOperations.getText().toString());
+        int amountOfElements = Integer.parseInt(mBinding.editTextOperations.getText().toString());
 
         Resources res = getResources();
         String[] nameOfOperations = res.getStringArray(R.array.name_of_map_operations);
@@ -125,10 +124,10 @@ public class MapsFragment extends Fragment {
         callableArrayList.add(callable3);
         callableArrayList.add(callable4);//
         callableArrayList.add(callable5);
-        int index=0;
-        for (Callable<Double> cal: callableArrayList) {
+        int index = 0;
+        for (Callable<Double> cal : callableArrayList) {
 
-            Future<Double> future = executor.submit(callableArrayList.get(index));
+            Future<Double> future = mExecutorService.submit(callableArrayList.get(index));
             try {
                 mCollectionsList.set(index, new OperationItem(nameOfOperations[index], future.get().toString() + " ms", false));
             } catch (InterruptedException | ExecutionException e) {
@@ -137,25 +136,30 @@ public class MapsFragment extends Fragment {
             mAdapter.notifyItemChanged(index);
             futureArrayList.add(future);
             index++;
-        }
 
-        if (futureArrayList.size() == callableArrayList.size()) {
-            boolean check = true;
-            for (Future<Double> future : futureArrayList) {
-                if (!future.isDone()) {
-                    check = false;
-                }
-            }
-            if (check) {
-                for (int i = 0; i < futureArrayList.size(); i++) {
-                    try {
-                        mCollectionsList.set(i, new OperationItem(nameOfOperations[i], futureArrayList.get(i).get().toString() + " ms", false));
-                    } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
+            if (futureArrayList.size() == callableArrayList.size()) {
+                boolean check = true;
+                for (Future<Double> futureArray : futureArrayList) {
+                    if (!futureArray.isDone()) {
+                        check = false;
                     }
                 }
+                if (check) {
+                    for (int i = 0; i < futureArrayList.size(); i++) {
+                        try {
+                            mCollectionsList.set(i, new OperationItem(nameOfOperations[i], futureArrayList.get(i).get().toString() + " ms", false));
+                        } catch (InterruptedException | ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    mBinding.startButton.setChecked(false);
+                }
             }
         }
+    }
+
+    public void shutdownExecution(){
+    }
 
 //        for (int i = 0; i < callableArrayList.size(); i++) {
 //            Future<Double> future = executor.submit(callableArrayList.get(i));
@@ -186,8 +190,6 @@ public class MapsFragment extends Fragment {
 //            }
 //        }
 
-
-    }
 
     //And i think it might be better to move it to standalone class
     public class HashMapCallable implements Callable<Double> {

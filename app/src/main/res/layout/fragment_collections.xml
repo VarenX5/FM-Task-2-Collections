@@ -55,12 +55,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextOperations" />
 
-    <Button
+    <ToggleButton
         android:id="@+id/startButton"
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:layout_marginTop="4dp"
-        android:text="@string/start"
+        android:textOff="@string/start"
+        android:textOn="@string/stop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

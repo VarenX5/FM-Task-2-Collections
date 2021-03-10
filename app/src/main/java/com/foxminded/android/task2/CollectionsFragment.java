@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.RadioGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,7 +24,6 @@ public class CollectionsFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     private FragmentCollectionsBinding mBinding;
     private ArrayList<OperationItem> mCollectionsList;
 
@@ -30,7 +31,11 @@ public class CollectionsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentCollectionsBinding.inflate(inflater, container, false);
+        return mBinding.getRoot();
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         mRecyclerView = mBinding.myRecyclerView;
         mRecyclerView.setHasFixedSize(true);
         mCollectionsList = new ArrayList<OperationItem>();
@@ -40,49 +45,25 @@ public class CollectionsFragment extends Fragment {
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         mRecyclerView.setAdapter(mAdapter);
 
-        mBinding.startButton.setOnClickListener(new View.OnClickListener() {
+        mBinding.startButton.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
+
             @Override
-            public void onClick(View v) {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mCollectionsList.set(0, new OperationItem("Adding to start in ArrayList: ", "1 ms", true));
                 mAdapter.notifyItemChanged(0);
             }
         });
-        return mBinding.getRoot();
     }
 
     private void createOperationsList() {
         Resources res = getResources();
         String[] operations = res.getStringArray(R.array.name_of_collections_operations);
         String ms = getString(R.string.n_a_ms);
-        mCollectionsList.add(new OperationItem(operations[0], ms, false));
-        mCollectionsList.add(new OperationItem(operations[1], ms, false));
-        mCollectionsList.add(new OperationItem(operations[2], ms, false));
-
-        mCollectionsList.add(new OperationItem(operations[3], ms, false));
-        mCollectionsList.add(new OperationItem(operations[4], ms, false));
-        mCollectionsList.add(new OperationItem(operations[5], ms, false));
-
-        mCollectionsList.add(new OperationItem(operations[6], ms, false));
-        mCollectionsList.add(new OperationItem(operations[7], ms, false));
-        mCollectionsList.add(new OperationItem(operations[8], ms, false));
-
-        mCollectionsList.add(new OperationItem(operations[9], ms, false));
-        mCollectionsList.add(new OperationItem(operations[10], ms, false));
-        mCollectionsList.add(new OperationItem(operations[11], ms, false));
-
-        mCollectionsList.add(new OperationItem(operations[12], ms, false));
-        mCollectionsList.add(new OperationItem(operations[13], ms, false));
-        mCollectionsList.add(new OperationItem(operations[14], ms, false));
-
-        mCollectionsList.add(new OperationItem(operations[15], ms, false));
-        mCollectionsList.add(new OperationItem(operations[16], ms, false));
-        mCollectionsList.add(new OperationItem(operations[17], ms, false));
-
-        mCollectionsList.add(new OperationItem(operations[18], ms, false));
-        mCollectionsList.add(new OperationItem(operations[19], ms, false));
-        mCollectionsList.add(new OperationItem(operations[20], ms, false));
-
+        for (int i=0;i<21;i++){
+            mCollectionsList.add(new OperationItem(operations[i], ms, false));
+        }
     }
+
 
 
     public static CollectionsFragment newInstance() {

@@ -23,8 +23,7 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<Collections
             mProgressBar = itemView.findViewById(R.id.progressBar);
         }
         public void bindItem(OperationItem item){
-            String textOfOperation;
-            textOfOperation = item.getName()+item.getTime();
+            String textOfOperation = item.getName()+item.getTime();
             mTextView.setText(textOfOperation);
             if (item.isOperationOn()) {
                 mProgressBar.setVisibility(ProgressBar.VISIBLE);
@@ -43,6 +42,7 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<Collections
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_item, parent, false);
         return new CollectionsViewHolder(v);
     }
+
 
     @Override
     public void onBindViewHolder(@NonNull CollectionsViewHolder holder, int position) {

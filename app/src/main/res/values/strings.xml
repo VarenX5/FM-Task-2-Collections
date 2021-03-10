@@ -5,6 +5,7 @@
     <string name="threads">Threads</string>
     <string name="operations">Operations</string>
     <string name="start">Start</string>
+    <string name="stop">Stop</string>
     <string-array name="name_of_collections_operations">
         <item>Adding to start in ArrayList: </item>
         <item>Adding to start in LinkedList: </item>
