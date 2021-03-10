@@ -110,7 +110,7 @@ public class MapsFragment extends Fragment {
 
         Resources res = getResources();
         String[] nameOfOperations = res.getStringArray(R.array.name_of_map_operations);
-
+        //i will change it to for loop later
         Callable<Double> callable0 = new TreeMapCallable(amountOfElements, 0);//
         Callable<Double> callable1 = new HashMapCallable(amountOfElements, 1);
         Callable<Double> callable2 = new TreeMapCallable(amountOfElements, 2);//
@@ -127,7 +127,7 @@ public class MapsFragment extends Fragment {
         int index = 0;
         for (Callable<Double> cal : callableArrayList) {
 
-            Future<Double> future = mExecutorService.submit(callableArrayList.get(index));
+            Future<Double> future = mExecutorService.submit(cal);
             try {
                 mCollectionsList.set(index, new OperationItem(nameOfOperations[index], future.get().toString() + " ms", false));
             } catch (InterruptedException | ExecutionException e) {
