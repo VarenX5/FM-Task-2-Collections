@@ -1,5 +1,6 @@
 package com.foxminded.android.task2;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +35,7 @@ public class CollectionsFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mCollectionsList = new ArrayList<OperationItem>();
         createOperationsList();
-        mAdapter = new MyRecyclerAdapter(mCollectionsList);
+        mAdapter = new CollectionsRecyclerAdapter(mCollectionsList);
 
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         mRecyclerView.setAdapter(mAdapter);
@@ -50,33 +51,36 @@ public class CollectionsFragment extends Fragment {
     }
 
     private void createOperationsList() {
-        mCollectionsList.add(new OperationItem("Adding to start in ArrayList: ", "N/A ms", false));
-        mCollectionsList.add(new OperationItem("Adding to start in LinkedList: ", "N/A ms", false));
-        mCollectionsList.add(new OperationItem("Adding to start in CopeOnWriteArrayList: ", "N/A ms", false));
+        Resources res = getResources();
+        String[] operations = res.getStringArray(R.array.name_of_collections_operations);
+        String ms = getString(R.string.n_a_ms);
+        mCollectionsList.add(new OperationItem(operations[0], ms, false));
+        mCollectionsList.add(new OperationItem(operations[1], ms, false));
+        mCollectionsList.add(new OperationItem(operations[2], ms, false));
 
-        mCollectionsList.add(new OperationItem("Adding to middle in ArrayList: ", "N/A ms", false));
-        mCollectionsList.add(new OperationItem("Adding to middle in LinkedList: ", "N/A ms", false));
-        mCollectionsList.add(new OperationItem("Adding to middle in CopeOnWriteArrayList: ", "N/A ms", false));
+        mCollectionsList.add(new OperationItem(operations[3], ms, false));
+        mCollectionsList.add(new OperationItem(operations[4], ms, false));
+        mCollectionsList.add(new OperationItem(operations[5], ms, false));
 
-        mCollectionsList.add(new OperationItem("Adding to end in ArrayList: ", "N/A ms", false));
-        mCollectionsList.add(new OperationItem("Adding to end in LinkedList: ", "N/A ms", false));
-        mCollectionsList.add(new OperationItem("Adding to end in CopeOnWriteArrayList: ", "N/A ms", false));
+        mCollectionsList.add(new OperationItem(operations[6], ms, false));
+        mCollectionsList.add(new OperationItem(operations[7], ms, false));
+        mCollectionsList.add(new OperationItem(operations[8], ms, false));
 
-        mCollectionsList.add(new OperationItem("Search in ArrayList: ", "N/A ms", false));
-        mCollectionsList.add(new OperationItem("Search in LinkedList: ", "N/A ms", false));
-        mCollectionsList.add(new OperationItem("Search in CopeOnWriteArrayList: ", "N/A ms", false));
+        mCollectionsList.add(new OperationItem(operations[9], ms, false));
+        mCollectionsList.add(new OperationItem(operations[10], ms, false));
+        mCollectionsList.add(new OperationItem(operations[11], ms, false));
 
-        mCollectionsList.add(new OperationItem("Removing from start in ArrayList: ", "N/A ms", false));
-        mCollectionsList.add(new OperationItem("Removing from start in LinkedList: ", "N/A ms", false));
-        mCollectionsList.add(new OperationItem("Removing from start in CopeOnWriteArrayList: ", "N/A ms", false));
+        mCollectionsList.add(new OperationItem(operations[12], ms, false));
+        mCollectionsList.add(new OperationItem(operations[13], ms, false));
+        mCollectionsList.add(new OperationItem(operations[14], ms, false));
 
-        mCollectionsList.add(new OperationItem("Removing from middle in ArrayList: ", "N/A ms", false));
-        mCollectionsList.add(new OperationItem("Removing from middle in LinkedList: ", "N/A ms", false));
-        mCollectionsList.add(new OperationItem("Removing from middle in CopeOnWriteArrayList: ", "N/A ms", false));
+        mCollectionsList.add(new OperationItem(operations[15], ms, false));
+        mCollectionsList.add(new OperationItem(operations[16], ms, false));
+        mCollectionsList.add(new OperationItem(operations[17], ms, false));
 
-        mCollectionsList.add(new OperationItem("Removing from end in ArrayList: ", "N/A ms", false));
-        mCollectionsList.add(new OperationItem("Removing from end in LinkedList: ", "N/A ms", false));
-        mCollectionsList.add(new OperationItem("Removing from end in CopeOnWriteArrayList: ", "N/A ms", false));
+        mCollectionsList.add(new OperationItem(operations[18], ms, false));
+        mCollectionsList.add(new OperationItem(operations[19], ms, false));
+        mCollectionsList.add(new OperationItem(operations[20], ms, false));
 
     }
 

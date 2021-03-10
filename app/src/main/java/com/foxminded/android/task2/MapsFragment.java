@@ -1,5 +1,6 @@
 package com.foxminded.android.task2;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.foxminded.android.task2.databinding.FragmentCollectionsBinding;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -38,7 +40,7 @@ public class MapsFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mCollectionsList = new ArrayList<OperationItem>();
         createOperationsList();
-        mAdapter = new MyRecyclerAdapter(mCollectionsList);
+        mAdapter = new CollectionsRecyclerAdapter(mCollectionsList);
 
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         mRecyclerView.setAdapter(mAdapter);
@@ -46,11 +48,14 @@ public class MapsFragment extends Fragment {
         mBinding.startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if ((mBinding.editTextOperations.getText().toString().equals("0")) | (mBinding.editTextOperations.getText().toString().equals(""))) {
-                    Toast.makeText(getActivity(), "You need to type more than zero operations", Toast.LENGTH_LONG).show();
+                String numOfOperation = mBinding.editTextOperations.getText().toString();
+                String numOfThreads = mBinding.editTextThreads.getText().toString();
+
+                if ((numOfOperation.equals("0")) | (numOfOperation.isEmpty())) {
+                    Toast.makeText(getActivity(), getString(R.string.message_need_more_than_zero_operations), Toast.LENGTH_LONG).show();
                     mBinding.editTextOperations.setText("");
-                } else if ((mBinding.editTextThreads.getText().toString().equals("0")) | (mBinding.editTextThreads.getText().toString().equals(""))) {
-                    Toast.makeText(getActivity(), "You need to type more than zero threads", Toast.LENGTH_LONG).show();
+                } else if ((numOfThreads.equals("0")) | (numOfThreads.isEmpty())) {
+                    Toast.makeText(getActivity(), getString(R.string.message_need_more_than_zero_threads), Toast.LENGTH_LONG).show();
                     mBinding.editTextThreads.setText("");
                 } else {
                     startOfOperationsList();
@@ -70,63 +75,117 @@ public class MapsFragment extends Fragment {
     }
 
     private void createOperationsList() {
-        mCollectionsList.add(new OperationItem("Adding to TreeMap: ", "N/A ms", false));
-        mCollectionsList.add(new OperationItem("Adding to HashMap: ", "N/A ms", false));
+        Resources res = getResources();
+        String[] operations = res.getStringArray(R.array.name_of_map_operations);
+        String ms = getString(R.string.n_a_ms);
+        mCollectionsList.add(new OperationItem(operations[0], ms, false));
+        mCollectionsList.add(new OperationItem(operations[1], ms, false));
 
-        mCollectionsList.add(new OperationItem("Search in TreeMap: ", "N/A ms", false));
-        mCollectionsList.add(new OperationItem("Search in HashMap: ", "N/A ms", false));
+        mCollectionsList.add(new OperationItem(operations[2], ms, false));
+        mCollectionsList.add(new OperationItem(operations[3], ms, false));
 
-        mCollectionsList.add(new OperationItem("Removing from TreeMap: ", "N/A ms", false));
-        mCollectionsList.add(new OperationItem("Removing from HashMap: ", "N/A ms", false));
+        mCollectionsList.add(new OperationItem(operations[4], ms, false));
+        mCollectionsList.add(new OperationItem(operations[5], ms, false));
     }
 
     private void startOfOperationsList() {
-        //start of Progress bar animation only for HashMap cause TreeMap is not ready yet
-        mCollectionsList.set(0, new OperationItem("Adding to TreeMap: ", "N/A ms", false));
-        mCollectionsList.set(1, new OperationItem("Adding to HashMap: ", "N/A ms", true));
+        Resources res = getResources();
+        String[] operations = res.getStringArray(R.array.name_of_map_operations);
+        String ms = getString(R.string.n_a_ms);
+        mCollectionsList.set(0, new OperationItem(operations[0], ms, true));
+        mCollectionsList.set(1, new OperationItem(operations[1], ms, true));
 
-        mCollectionsList.set(2, new OperationItem("Search in TreeMap: ", "N/A ms", false));
-        mCollectionsList.set(3, new OperationItem("Search in HashMap: ", "N/A ms", true));
+        mCollectionsList.set(2, new OperationItem(operations[2], ms, true));
+        mCollectionsList.set(3, new OperationItem(operations[3], ms, true));
 
-        mCollectionsList.set(4, new OperationItem("Removing from TreeMap: ", "N/A ms", false));
-        mCollectionsList.set(5, new OperationItem("Removing from HashMap: ", "N/A ms", true));
+        mCollectionsList.set(4, new OperationItem(operations[4], ms, true));
+        mCollectionsList.set(5, new OperationItem(operations[5], ms, true));
+        mAdapter.notifyDataSetChanged();
     }
 
     private void startOfExecution() {
         ExecutorService executor = Executors.newFixedThreadPool(Integer.parseInt(mBinding.editTextThreads.getText().toString()));
+        ArrayList<Future<Double>> futureArrayList = new ArrayList<>();
+        ArrayList<Callable<Double>> callableArrayList = new ArrayList<>();
+        Integer amountOfElements = Integer.parseInt(mBinding.editTextOperations.getText().toString());
 
-        Callable<Double> callable1 = new HashMapCallable(Integer.parseInt(mBinding.editTextOperations.getText().toString()), 0);
-        Callable<Double> callable2 = new HashMapCallable(Integer.parseInt(mBinding.editTextOperations.getText().toString()), 1);
-        Callable<Double> callable3 = new HashMapCallable(Integer.parseInt(mBinding.editTextOperations.getText().toString()), 2);
+        Resources res = getResources();
+        String[] nameOfOperations = res.getStringArray(R.array.name_of_map_operations);
 
-        Future<Double> future1 = executor.submit(callable1);
-        Future<Double> future2 = executor.submit(callable2);
-        Future<Double> future3 = executor.submit(callable3);
+        Callable<Double> callable0 = new TreeMapCallable(amountOfElements, 0);//
+        Callable<Double> callable1 = new HashMapCallable(amountOfElements, 1);
+        Callable<Double> callable2 = new TreeMapCallable(amountOfElements, 2);//
+        Callable<Double> callable3 = new HashMapCallable(amountOfElements, 3);
+        Callable<Double> callable4 = new TreeMapCallable(amountOfElements, 4);//
+        Callable<Double> callable5 = new HashMapCallable(amountOfElements, 5);
 
-        while (true) {
+        callableArrayList.add(callable0);//
+        callableArrayList.add(callable1);
+        callableArrayList.add(callable2);//
+        callableArrayList.add(callable3);
+        callableArrayList.add(callable4);//
+        callableArrayList.add(callable5);
+        int index=0;
+        for (Callable<Double> cal: callableArrayList) {
+
+            Future<Double> future = executor.submit(callableArrayList.get(index));
             try {
-                if (!future1.isDone()) {
-                    mCollectionsList.set(1, new OperationItem("Adding to HashMap: ", future1.get().toString() + " ms", false));
-                    mAdapter.notifyItemChanged(1);
-                }
-                if (!future2.isDone()) {
-                    mCollectionsList.set(3, new OperationItem("Search in HashMap: ", future2.get().toString() + " ms", false));
-                    mAdapter.notifyItemChanged(3);
-                }
-                if (!future3.isDone()) {
-                    mCollectionsList.set(5, new OperationItem("Removing from HashMap: ", future3.get().toString() + " ms", false));
-                    mAdapter.notifyItemChanged(5);
-                }
-
-                if (future1.isDone() && future2.isDone() && future3.isDone()) {
-                    break;
-                }
-
-
+                mCollectionsList.set(index, new OperationItem(nameOfOperations[index], future.get().toString() + " ms", false));
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
+            mAdapter.notifyItemChanged(index);
+            futureArrayList.add(future);
+            index++;
         }
+
+        if (futureArrayList.size() == callableArrayList.size()) {
+            boolean check = true;
+            for (Future<Double> future : futureArrayList) {
+                if (!future.isDone()) {
+                    check = false;
+                }
+            }
+            if (check) {
+                for (int i = 0; i < futureArrayList.size(); i++) {
+                    try {
+                        mCollectionsList.set(i, new OperationItem(nameOfOperations[i], futureArrayList.get(i).get().toString() + " ms", false));
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+//        for (int i = 0; i < callableArrayList.size(); i++) {
+//            Future<Double> future = executor.submit(callableArrayList.get(i));
+//            try {
+//                mCollectionsList.set(i, new OperationItem(nameOfOperations[i], future.get().toString() + " ms", false));
+//            } catch (InterruptedException | ExecutionException e) {
+//                e.printStackTrace();
+//            }
+//            mAdapter.notifyItemChanged(i);
+//            futureArrayList.add(future);
+//        }
+//
+//        if (futureArrayList.size() == callableArrayList.size()) {
+//            boolean check = true;
+//            for (Future<Double> future : futureArrayList) {
+//                if (!future.isDone()) {
+//                    check = false;
+//                }
+//            }
+//            if (check) {
+//                for (int i = 0; i < futureArrayList.size(); i++) {
+//                    try {
+//                        mCollectionsList.set(i, new OperationItem(nameOfOperations[i], futureArrayList.get(i).get().toString() + " ms", false));
+//                    } catch (InterruptedException | ExecutionException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }
+
 
     }
 
@@ -150,27 +209,69 @@ public class MapsFragment extends Fragment {
                 hashMap.put(i, 150);
             }
             switch (mNumberOfOperation) {
-                case 0:
+                case 1:
                     startTime = System.nanoTime();
                     hashMap.put(1, 125);
                     endTime = System.nanoTime();
                     break;
-                case 1:
+                case 3:
                     startTime = System.nanoTime();
                     //cause i didnt know that item needed to be search for i decided to search for an item in the middle of hashMap
                     boolean contain = hashMap.containsKey(mOperations / 2);
                     endTime = System.nanoTime();
                     break;
-                case 2:
+                case 5:
                     startTime = System.nanoTime();
                     hashMap.remove(mOperations / 2);
                     endTime = System.nanoTime();
                     break;
                 default:
-                    return null;
+                    throw new RuntimeException("We got a runtime exception");
 
             }
-            return (Double) (double) (endTime - startTime) / 1000000;
+            return (double) (endTime - startTime) / 1000000;
+        }
+    }
+
+    public class TreeMapCallable implements Callable<Double> {
+
+        private final Integer mOperations;
+        private final Integer mNumberOfOperation;
+
+        public TreeMapCallable(int operations, int numOfOperation) {
+            mOperations = operations;
+            mNumberOfOperation = numOfOperation;
+        }
+
+        @Override
+        public Double call() throws Exception {
+            long startTime = 0, endTime = 0;
+
+            TreeMap<Integer, Integer> treeMap = new TreeMap<>();
+            for (int i = 0; i < mOperations; i++) {
+                treeMap.put(i, 150);
+            }
+            switch (mNumberOfOperation) {
+                case 0:
+                    startTime = System.nanoTime();
+                    treeMap.put(1, 125);
+                    endTime = System.nanoTime();
+                    break;
+                case 2:
+                    startTime = System.nanoTime();
+                    boolean contain = treeMap.containsKey(mOperations / 2);
+                    endTime = System.nanoTime();
+                    break;
+                case 4:
+                    startTime = System.nanoTime();
+                    treeMap.remove(mOperations / 2);
+                    endTime = System.nanoTime();
+                    break;
+                default:
+                    throw new RuntimeException("We got a runtime exception");
+
+            }
+            return (double) (endTime - startTime) / 1000000;
         }
     }
 

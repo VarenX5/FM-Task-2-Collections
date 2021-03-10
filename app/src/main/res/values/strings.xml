@@ -5,4 +5,48 @@
     <string name="threads">Threads</string>
     <string name="operations">Operations</string>
     <string name="start">Start</string>
+    <string-array name="name_of_collections_operations">
+        <item>Adding to start in ArrayList: </item>
+        <item>Adding to start in LinkedList: </item>
+        <item>Adding to start in CopyOnWriteArrayList: </item>
+
+        <item>Adding to middle in ArrayList: </item>
+        <item>Adding to middle in LinkedList: </item>
+        <item>Adding to middle in CopyOnWriteArrayList: </item>
+
+        <item>Adding to end in ArrayList: </item>
+        <item>Adding to end in LinkedList: </item>
+        <item>Adding to end in CopyOnWriteArrayList: </item>
+
+        <item>Search in ArrayList: </item>
+        <item>Search in LinkedList: </item>
+        <item>Search in CopyOnWriteArrayList: </item>
+
+        <item>Removing from start in ArrayList: </item>
+        <item>Removing from start in LinkedList: </item>
+        <item>Removing from start in CopyOnWriteArrayList: </item>
+
+        <item>Removing from middle in ArrayList: </item>
+        <item>Removing from middle in LinkedList: </item>
+        <item>Removing from middle in CopyOnWriteArrayList: </item>
+
+        <item>Removing from end in ArrayList: </item>
+        <item>Removing from end in LinkedList: </item>
+        <item>Removing from end in CopyOnWriteArrayList: </item>
+    </string-array>
+    <string-array name="name_of_map_operations">
+        <item>Adding to TreeMap</item>
+        <item>Adding to HashMap</item>
+        <item>Search in TreeMap</item>
+
+        <item>Search in HashMap</item>
+        <item>Removing from TreeMap</item>
+        <item>Removing from HashMap</item>
+    </string-array>
+    <string name="n_a_ms">N/A ms </string>
+    <string name="ms"> ms </string>
+    <string name="message_need_more_than_zero_operations">You need to type more than zero operations</string>
+    <string name="message_need_more_than_zero_threads">You need to type more than zero threads</string>
+
+
 </resources>
