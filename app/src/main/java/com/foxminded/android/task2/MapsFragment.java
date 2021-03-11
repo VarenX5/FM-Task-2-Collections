@@ -128,11 +128,11 @@ public class MapsFragment extends Fragment {
         for (Callable<Double> cal : callableArrayList) {
 
             Future<Double> future = mExecutorService.submit(cal);
-            try {
-                mCollectionsList.set(index, new OperationItem(nameOfOperations[index], future.get().toString() + " ms", false));
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                mCollectionsList.set(index, new OperationItem(nameOfOperations[index], future.get().toString() + " ms", false));
+//            } catch (InterruptedException | ExecutionException e) {
+//                e.printStackTrace();
+//            }
             mAdapter.notifyItemChanged(index);
             futureArrayList.add(future);
             index++;
@@ -144,21 +144,21 @@ public class MapsFragment extends Fragment {
                         check = false;
                     }
                 }
-                if (check) {
-                    for (int i = 0; i < futureArrayList.size(); i++) {
-                        try {
-                            mCollectionsList.set(i, new OperationItem(nameOfOperations[i], futureArrayList.get(i).get().toString() + " ms", false));
-                        } catch (InterruptedException | ExecutionException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    mBinding.startButton.setChecked(false);
-                }
+//                if (check) {
+//                    for (int i = 0; i < futureArrayList.size(); i++) {
+//                        try {
+//                            mCollectionsList.set(i, new OperationItem(nameOfOperations[i], futureArrayList.get(i).get().toString() + " ms", false));
+//                        } catch (InterruptedException | ExecutionException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                    mBinding.startButton.setChecked(false);
+//                }
             }
         }
     }
 
-    public void shutdownExecution(){
+    public void shutdownExecution() {
     }
 
 //        for (int i = 0; i < callableArrayList.size(); i++) {
@@ -278,5 +278,95 @@ public class MapsFragment extends Fragment {
     }
 
 
-}
+    interface CalculationOfOperations {
+        public void getColumnCount();
 
+        public ArrayList<Integer> getOperations();
+
+        public double measureTime(int numOfOperation);
+    }
+
+    public class CalculationForMaps implements CalculationOfOperations {
+        int mOperations;
+
+        public CalculationForMaps(int numberOfItemsInMap) {
+            mOperations = numberOfItemsInMap;
+        }
+
+        @Override
+        public void getColumnCount() {
+            //tbh no idea what it can be used for
+        }
+
+        @Override
+        public ArrayList<Integer> getOperations() {
+            ArrayList<Integer> arrayList = new ArrayList<>();
+            for (int i = 0; i < 6; i++) {
+                arrayList.add(i);
+            }
+            return arrayList;
+        }
+
+        @Override
+        public double measureTime(int numOfOperation) {
+
+            long startTime = 0, endTime = 0;
+            if ((numOfOperation == 0) | (numOfOperation == 2) | (numOfOperation == 4)) {
+
+                TreeMap<Integer, Integer> treeMap = new TreeMap<>();
+                for (int i = 0; i < mOperations; i++) {
+                    treeMap.put(i, 150);
+                }
+                switch (numOfOperation) {
+                    case 0:
+                        startTime = System.nanoTime();
+                        treeMap.put(1, 125);
+                        endTime = System.nanoTime();
+                        break;
+                    case 2:
+                        startTime = System.nanoTime();
+                        boolean contain = treeMap.containsKey(mOperations / 2);
+                        endTime = System.nanoTime();
+                        break;
+                    case 4:
+                        startTime = System.nanoTime();
+                        treeMap.remove(mOperations / 2);
+                        endTime = System.nanoTime();
+                        break;
+                    default:
+                        throw new RuntimeException("We got a runtime exception");
+                }
+            } else {
+                HashMap<Integer, Integer> hashMap = new HashMap<Integer, Integer>();
+                for (int i = 0; i < mOperations; i++) {
+                    hashMap.put(i, 150);
+                }
+                switch (numOfOperation) {
+                    case 1:
+                        startTime = System.nanoTime();
+                        hashMap.put(1, 125);
+                        endTime = System.nanoTime();
+                        break;
+                    case 3:
+                        startTime = System.nanoTime();
+                        //cause i didnt know that item needed to be search for i decided to search for an item in the middle of hashMap
+                        boolean contain = hashMap.containsKey(mOperations / 2);
+                        endTime = System.nanoTime();
+                        break;
+                    case 5:
+                        startTime = System.nanoTime();
+                        hashMap.remove(mOperations / 2);
+                        endTime = System.nanoTime();
+                        break;
+                    default:
+                        throw new RuntimeException("We got a runtime exception");
+
+                }
+            }
+            return (double) (endTime - startTime) / 1000000;
+
+        }
+
+    }
+
+}
