@@ -105,7 +105,6 @@ public class MapsFragment extends Fragment {
     private void startOfExecution() {
         mExecutorService = Executors.newFixedThreadPool(Integer.parseInt(mBinding.editTextThreads.getText().toString()));
         ArrayList<Future<Double>> futureArrayList = new ArrayList<>();
-        ArrayList<Callable<Double>> callableArrayList = new ArrayList<>();
         int amountOfElements = Integer.parseInt(mBinding.editTextOperations.getText().toString());
 
         Resources res = getResources();
@@ -127,91 +126,8 @@ public class MapsFragment extends Fragment {
     public void shutdownExecution() {
     }
 
-    //And i think it might be better to move it to standalone class
-    public class HashMapCallable implements Callable<Double> {
 
-        private final Integer mOperations;
-        private final Integer mNumberOfOperation;
 
-        public HashMapCallable(int operations, int numOfOperation) {
-            mOperations = operations;
-            mNumberOfOperation = numOfOperation;
-        }
-
-        @Override
-        public Double call() throws Exception {
-            long startTime = 0, endTime = 0;
-
-            HashMap<Integer, Integer> hashMap = new HashMap<Integer, Integer>();
-            for (int i = 0; i < mOperations; i++) {
-                hashMap.put(i, 150);
-            }
-            switch (mNumberOfOperation) {
-                case 1:
-                    startTime = System.nanoTime();
-                    hashMap.put(1, 125);
-                    endTime = System.nanoTime();
-                    break;
-                case 3:
-                    startTime = System.nanoTime();
-                    //cause i didnt know that item needed to be search for i decided to search for an item in the middle of hashMap
-                    boolean contain = hashMap.containsKey(mOperations / 2);
-                    endTime = System.nanoTime();
-                    break;
-                case 5:
-                    startTime = System.nanoTime();
-                    hashMap.remove(mOperations / 2);
-                    endTime = System.nanoTime();
-                    break;
-                default:
-                    throw new RuntimeException("We got a runtime exception");
-
-            }
-            return (double) (endTime - startTime) / 1000000;
-        }
-    }
-
-    public class TreeMapCallable implements Callable<Double> {
-
-        private final Integer mOperations;
-        private final Integer mNumberOfOperation;
-
-        public TreeMapCallable(int operations, int numOfOperation) {
-            mOperations = operations;
-            mNumberOfOperation = numOfOperation;
-        }
-
-        @Override
-        public Double call() throws Exception {
-            long startTime = 0, endTime = 0;
-
-            TreeMap<Integer, Integer> treeMap = new TreeMap<>();
-            for (int i = 0; i < mOperations; i++) {
-                treeMap.put(i, 150);
-            }
-            switch (mNumberOfOperation) {
-                case 0:
-                    startTime = System.nanoTime();
-                    treeMap.put(1, 125);
-                    endTime = System.nanoTime();
-                    break;
-                case 2:
-                    startTime = System.nanoTime();
-                    boolean contain = treeMap.containsKey(mOperations / 2);
-                    endTime = System.nanoTime();
-                    break;
-                case 4:
-                    startTime = System.nanoTime();
-                    treeMap.remove(mOperations / 2);
-                    endTime = System.nanoTime();
-                    break;
-                default:
-                    throw new RuntimeException("We got a runtime exception");
-
-            }
-            return (double) (endTime - startTime) / 1000000;
-        }
-    }
 
 
     interface CalculationOfOperations {
