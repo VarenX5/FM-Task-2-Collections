@@ -110,86 +110,22 @@ public class MapsFragment extends Fragment {
 
         Resources res = getResources();
         String[] nameOfOperations = res.getStringArray(R.array.name_of_map_operations);
-        //i will change it to for loop later
-        Callable<Double> callable0 = new TreeMapCallable(amountOfElements, 0);//
-        Callable<Double> callable1 = new HashMapCallable(amountOfElements, 1);
-        Callable<Double> callable2 = new TreeMapCallable(amountOfElements, 2);//
-        Callable<Double> callable3 = new HashMapCallable(amountOfElements, 3);
-        Callable<Double> callable4 = new TreeMapCallable(amountOfElements, 4);//
-        Callable<Double> callable5 = new HashMapCallable(amountOfElements, 5);
+        CalculationForMaps calculationForMaps = new CalculationForMaps(amountOfElements);
 
-        callableArrayList.add(callable0);//
-        callableArrayList.add(callable1);
-        callableArrayList.add(callable2);//
-        callableArrayList.add(callable3);
-        callableArrayList.add(callable4);//
-        callableArrayList.add(callable5);
-        int index = 0;
-        for (Callable<Double> cal : callableArrayList) {
-
-            Future<Double> future = mExecutorService.submit(cal);
-//            try {
-//                mCollectionsList.set(index, new OperationItem(nameOfOperations[index], future.get().toString() + " ms", false));
-//            } catch (InterruptedException | ExecutionException e) {
-//                e.printStackTrace();
-//            }
-            mAdapter.notifyItemChanged(index);
-            futureArrayList.add(future);
-            index++;
-
-            if (futureArrayList.size() == callableArrayList.size()) {
-                boolean check = true;
-                for (Future<Double> futureArray : futureArrayList) {
-                    if (!futureArray.isDone()) {
-                        check = false;
-                    }
-                }
-//                if (check) {
-//                    for (int i = 0; i < futureArrayList.size(); i++) {
-//                        try {
-//                            mCollectionsList.set(i, new OperationItem(nameOfOperations[i], futureArrayList.get(i).get().toString() + " ms", false));
-//                        } catch (InterruptedException | ExecutionException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                    mBinding.startButton.setChecked(false);
-//                }
+        for(Integer numOfOperation:calculationForMaps.getOperations()){
+            Future<Double> future = mExecutorService.submit(()-> calculationForMaps.measureTime(numOfOperation));
+            try {
+                mCollectionsList.set(numOfOperation, new OperationItem(nameOfOperations[numOfOperation], future.get().toString() + " ms", false));
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
             }
         }
+        mBinding.startButton.setChecked(false);
+
     }
 
     public void shutdownExecution() {
     }
-
-//        for (int i = 0; i < callableArrayList.size(); i++) {
-//            Future<Double> future = executor.submit(callableArrayList.get(i));
-//            try {
-//                mCollectionsList.set(i, new OperationItem(nameOfOperations[i], future.get().toString() + " ms", false));
-//            } catch (InterruptedException | ExecutionException e) {
-//                e.printStackTrace();
-//            }
-//            mAdapter.notifyItemChanged(i);
-//            futureArrayList.add(future);
-//        }
-//
-//        if (futureArrayList.size() == callableArrayList.size()) {
-//            boolean check = true;
-//            for (Future<Double> future : futureArrayList) {
-//                if (!future.isDone()) {
-//                    check = false;
-//                }
-//            }
-//            if (check) {
-//                for (int i = 0; i < futureArrayList.size(); i++) {
-//                    try {
-//                        mCollectionsList.set(i, new OperationItem(nameOfOperations[i], futureArrayList.get(i).get().toString() + " ms", false));
-//                    } catch (InterruptedException | ExecutionException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        }
-
 
     //And i think it might be better to move it to standalone class
     public class HashMapCallable implements Callable<Double> {
