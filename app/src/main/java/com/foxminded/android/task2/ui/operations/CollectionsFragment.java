@@ -1,12 +1,10 @@
-package com.foxminded.android.task2;
+package com.foxminded.android.task2.ui.operations;
 
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.RadioGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,7 +12,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.foxminded.android.task2.R;
 import com.foxminded.android.task2.databinding.FragmentCollectionsBinding;
+import com.foxminded.android.task2.dto.OperationItem;
 
 import java.util.ArrayList;
 
@@ -23,9 +23,13 @@ public class CollectionsFragment extends Fragment {
     static final String ARGUMENT_OBJ = "object";
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private final CollectionsRecyclerAdapter mAdapter = new CollectionsRecyclerAdapter();
     private FragmentCollectionsBinding mBinding;
     private ArrayList<OperationItem> mCollectionsList;
+
+    public static CollectionsFragment newInstance() {
+        return new CollectionsFragment();
+    }
 
     @Nullable
     @Override
@@ -38,20 +42,16 @@ public class CollectionsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         mRecyclerView = mBinding.myRecyclerView;
         mRecyclerView.setHasFixedSize(true);
-        mCollectionsList = new ArrayList<OperationItem>();
+        mCollectionsList = new ArrayList<>();
         createOperationsList();
-        mAdapter = new CollectionsRecyclerAdapter(mCollectionsList);
+        mAdapter.setItems(mCollectionsList);
 
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         mRecyclerView.setAdapter(mAdapter);
 
-        mBinding.startButton.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mCollectionsList.set(0, new OperationItem("Adding to start in ArrayList: ", "1 ms", true));
-                mAdapter.notifyItemChanged(0);
-            }
+        mBinding.startButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            mCollectionsList.set(0, new OperationItem("Adding to start in ArrayList: ", "1 ms", true));
+            mAdapter.notifyItemChanged(0);
         });
     }
 
@@ -63,12 +63,4 @@ public class CollectionsFragment extends Fragment {
             mCollectionsList.add(new OperationItem(operations[i], ms, false));
         }
     }
-
-
-
-    public static CollectionsFragment newInstance() {
-        return new CollectionsFragment();
-    }
-
-
 }

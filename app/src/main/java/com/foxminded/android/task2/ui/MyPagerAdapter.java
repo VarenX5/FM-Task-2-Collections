@@ -1,4 +1,4 @@
-package com.foxminded.android.task2.ui.main;
+package com.foxminded.android.task2.ui;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -6,8 +6,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.foxminded.android.task2.CollectionsFragment;
-import com.foxminded.android.task2.MapsFragment;
+import com.foxminded.android.task2.ui.operations.CollectionsFragment;
+import com.foxminded.android.task2.ui.operations.MapsFragment;
 
 public class MyPagerAdapter extends FragmentPagerAdapter {
 

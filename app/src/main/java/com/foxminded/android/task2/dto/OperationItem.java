@@ -1,4 +1,4 @@
-package com.foxminded.android.task2;
+package com.foxminded.android.task2.dto;
 
 public class OperationItem {
 

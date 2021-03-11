@@ -1,13 +1,12 @@
-package com.foxminded.android.task2;
+package com.foxminded.android.task2.ui;
 
 import android.os.Bundle;
 
-import com.foxminded.android.task2.ui.main.MyPagerAdapter;
-import com.google.android.material.tabs.TabLayout;
-
-
-import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
+
+import com.foxminded.android.task2.R;
+import com.google.android.material.tabs.TabLayout;
 
 public class MainActivity extends AppCompatActivity {
 
