@@ -31,6 +31,7 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<Collections
         holder.bindItem(items.get(position));
     }
 
+
     @Override
     public int getItemCount() {
         return items.size();
@@ -42,6 +43,16 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<Collections
         notifyDataSetChanged();
     }
 
+    public void setItem(int index, OperationItem item) {
+        if (index < items.size()) {
+            items.set(index, item);
+        }
+        notifyItemChanged(index);
+    }
+
+    public List<OperationItem> getItems() {
+        return items;
+    }
 
     public static class CollectionsViewHolder extends RecyclerView.ViewHolder {
         public final TextView mTextView;
@@ -54,11 +65,19 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<Collections
         }
 
         public void bindItem(OperationItem item) {
-            mTextView.setText(item.getName() + item.getTime());
+            String itemText = item.getName() + item.getTime();
+            mTextView.setText(itemText);
             if (item.isOperationOn()) {
-                mProgressBar.setVisibility(ProgressBar.VISIBLE);
+                mProgressBar.setAlpha(0f);
+                mProgressBar.setVisibility(View.VISIBLE);
+                mProgressBar.animate()
+                        .alpha(1.0f)
+                        .setDuration(1500);
             } else {
-                mProgressBar.setVisibility(ProgressBar.INVISIBLE);
+                mProgressBar.animate()
+                        .alpha(0.0f)
+                        .setDuration(1500);
+                mProgressBar.setVisibility(View.INVISIBLE);
             }
         }
     }

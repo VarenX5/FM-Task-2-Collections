@@ -6,6 +6,8 @@
     <string name="operations">Operations</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
+    <string name="execution_done">Calculation is done</string>
+    <string name="execution_shutdown">Execution was shutdown</string>
     <string-array name="name_of_collections_operations">
         <item>Adding to start in ArrayList: </item>
         <item>Adding to start in LinkedList: </item>
@@ -36,13 +38,13 @@
         <item>Removing from end in CopyOnWriteArrayList: </item>
     </string-array>
     <string-array name="name_of_map_operations">
-        <item>Adding to TreeMap</item>
-        <item>Adding to HashMap</item>
-        <item>Search in TreeMap</item>
+        <item>Adding to TreeMap: </item>
+        <item>Adding to HashMap: </item>
+        <item>Search in TreeMap: </item>
 
-        <item>Search in HashMap</item>
-        <item>Removing from TreeMap</item>
-        <item>Removing from HashMap</item>
+        <item>Search in HashMap: </item>
+        <item>Removing from TreeMap: </item>
+        <item>Removing from HashMap: </item>
     </string-array>
     <string name="n_a_ms">N/A ms </string>
     <string name="ms"> ms </string>

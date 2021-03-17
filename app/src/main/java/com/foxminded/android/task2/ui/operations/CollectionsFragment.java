@@ -50,8 +50,15 @@ public class CollectionsFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
 
         mBinding.startButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            mCollectionsList.set(0, new OperationItem("Adding to start in ArrayList: ", "1 ms", true));
-            mAdapter.notifyItemChanged(0);
+            if (isChecked) {
+                //mCollectionsList.set(0, new OperationItem("Adding to start in ArrayList: ", "1 ms", true, 0));
+                mAdapter.setItem(0, new OperationItem("Adding to start in ArrayList: ", "1 ms", true, 0));
+                //mAdapter.setItems(mCollectionsList);
+            } else {
+                mAdapter.setItem(0, new OperationItem("Adding to start in ArrayList: ", "N/A ms", false, 0));
+                //mAdapter.setItems(mCollectionsList);
+            }
+
         });
     }
 
@@ -59,8 +66,8 @@ public class CollectionsFragment extends Fragment {
         Resources res = getResources();
         String[] operations = res.getStringArray(R.array.name_of_collections_operations);
         String ms = getString(R.string.n_a_ms);
-        for (int i=0;i<21;i++){
-            mCollectionsList.add(new OperationItem(operations[i], ms, false));
+        for (int i = 0; i < 21; i++) {
+            mCollectionsList.add(new OperationItem(operations[i], ms, false, i));
         }
     }
 }

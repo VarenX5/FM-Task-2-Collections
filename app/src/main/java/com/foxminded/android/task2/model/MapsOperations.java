@@ -31,18 +31,19 @@ public class MapsOperations implements Operations {
         final List<OperationItem> items = new ArrayList<>();
         final String ms = ctx.getString(R.string.n_a_ms);
         for (int i = 0; i < 6; i++) {
-            items.add(new OperationItem(operations[i], ms, false));
+            items.add(new OperationItem(operations[i], ms, false, i));
         }
         return items;
     }
 
     @Override
-    public double measureTime(int numOfOperation, OperationItem operation) {
+    public double measureTime(int amountOfElements, OperationItem operation) {
         long startTime = 0, endTime = 0;
+        int numOfOperation= operation.getNumber();
         if ((numOfOperation == 0) | (numOfOperation == 2) | (numOfOperation == 4)) {
 
             TreeMap<Integer, Integer> treeMap = new TreeMap<>();
-            for (int i = 0; i < mOperations; i++) {
+            for (int i = 0; i < amountOfElements; i++) {
                 treeMap.put(i, 150);
             }
             switch (numOfOperation) {
@@ -53,12 +54,12 @@ public class MapsOperations implements Operations {
                     break;
                 case 2:
                     startTime = System.nanoTime();
-                    boolean contain = treeMap.containsKey(mOperations / 2);
+                    boolean contain = treeMap.containsKey(amountOfElements / 2);
                     endTime = System.nanoTime();
                     break;
                 case 4:
                     startTime = System.nanoTime();
-                    treeMap.remove(mOperations / 2);
+                    treeMap.remove(amountOfElements / 2);
                     endTime = System.nanoTime();
                     break;
                 default:
@@ -66,7 +67,7 @@ public class MapsOperations implements Operations {
             }
         } else {
             HashMap<Integer, Integer> hashMap = new HashMap<Integer, Integer>();
-            for (int i = 0; i < mOperations; i++) {
+            for (int i = 0; i < amountOfElements; i++) {
                 hashMap.put(i, 150);
             }
             switch (numOfOperation) {
@@ -77,13 +78,12 @@ public class MapsOperations implements Operations {
                     break;
                 case 3:
                     startTime = System.nanoTime();
-                    //cause i didnt know that item needed to be search for i decided to search for an item in the middle of hashMap
-                    boolean contain = hashMap.containsKey(mOperations / 2);
+                    boolean contain = hashMap.containsKey(amountOfElements / 2);
                     endTime = System.nanoTime();
                     break;
                 case 5:
                     startTime = System.nanoTime();
-                    hashMap.remove(mOperations / 2);
+                    hashMap.remove(amountOfElements / 2);
                     endTime = System.nanoTime();
                     break;
                 default:

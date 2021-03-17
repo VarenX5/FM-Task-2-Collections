@@ -4,11 +4,14 @@ public class OperationItem {
 
     private String mName;
     private String mTime;
+
+    private Integer mNumber;
     private boolean isOperationOn;
 
-    public OperationItem (String name, String time, boolean operationFlag){
+    public OperationItem (String name, String time, boolean operationFlag, Integer number){
         mName = name;
         mTime = time;
+        mNumber = number;
         isOperationOn = operationFlag;
     }
 
@@ -28,6 +31,13 @@ public class OperationItem {
         mTime = time;
     }
 
+    public Integer getNumber() {
+        return mNumber;
+    }
+
+    public void setNumber(Integer number) {
+        mNumber = number;
+    }
     public boolean isOperationOn() {
         return isOperationOn;
     }
