@@ -36,19 +36,6 @@ public class CollectionsOperations implements Operations {
         return items;
     }
 
-    //adding in the beginning; ArrayList, LinkedList, CopyOnWriteArrayList.
-    //
-    //adding in the middle;
-    //
-    //adding in the end;
-    //
-    //search by value;
-    //
-    //removing in the beginning;
-    //
-    //removing in the middle;
-    //
-    //removing in the end.
     @Override
     public double measureTime(int amountOfElements, OperationItem operation) {
         long startTime = 0, endTime = 0;
@@ -193,6 +180,6 @@ public class CollectionsOperations implements Operations {
 
 
         }
-        return 0;
+        return (double) (endTime - startTime) / 1000000;
     }
 }

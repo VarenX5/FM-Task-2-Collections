@@ -67,9 +67,11 @@ public class MapsFragment extends Fragment {
                 if (numOfOperation.equals("0") || numOfOperation.isEmpty()) {
                     Toast.makeText(getActivity(), getString(R.string.message_need_more_than_zero_operations), Toast.LENGTH_LONG).show();
                     mBinding.editTextOperations.setText("");
+                    mBinding.startButton.setChecked(false);
                 } else if (numOfThreads.equals("0") || numOfThreads.isEmpty()) {
                     Toast.makeText(getActivity(), getString(R.string.message_need_more_than_zero_threads), Toast.LENGTH_LONG).show();
                     mBinding.editTextThreads.setText("");
+                    mBinding.startButton.setChecked(false);
                 } else {
                     startOfOperationsList();
                     mAdapter.notifyDataSetChanged();
@@ -101,8 +103,6 @@ public class MapsFragment extends Fragment {
         for (OperationItem operation : mapsOperations.getOperations()) {
             mExecutorService.submit(() -> {
                 operation.setTime(Double.toString(mapsOperations.measureTime(amountOfElements, operation)));
-                //mCollectionsList.set(operation.getNumber(), operation);
-                //mAdapter.setItems(mCollectionsList);
                 mAdapter.setItem(operation.getNumber(), operation);
                 counter.getAndIncrement();
                 if (counter.get() == 6) {
@@ -132,6 +132,7 @@ public class MapsFragment extends Fragment {
     public void forceShutdownExecution() {
         Log.d("wtf", "Execution was forced to shutdown");
         mExecutorService.shutdownNow();
+        isExecutionOn = false;
         mBinding.startButton.setChecked(false);
         Toast.makeText(getActivity(), getString(R.string.execution_shutdown), Toast.LENGTH_LONG).show();
         List<OperationItem> operationItemList = new ArrayList<>(mAdapter.getItems());
