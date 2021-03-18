@@ -15,7 +15,7 @@ import com.foxminded.android.task2.dto.OperationItem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<CollectionsRecyclerAdapter.CollectionsViewHolder> {
+public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.CollectionsViewHolder> {
     private final List<OperationItem> items = new ArrayList<>();
 
     @NonNull
@@ -68,8 +68,6 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<Collections
             String itemText = item.getName() + item.getTime();
             mTextView.setText(itemText);
             if (item.isOperationOn()) {
-                mProgressBar.setAlpha(0f);
-                mProgressBar.setVisibility(View.VISIBLE);
                 mProgressBar.animate()
                         .alpha(1.0f)
                         .setDuration(1500);
@@ -77,7 +75,6 @@ public class CollectionsRecyclerAdapter extends RecyclerView.Adapter<Collections
                 mProgressBar.animate()
                         .alpha(0.0f)
                         .setDuration(1500);
-                mProgressBar.setVisibility(View.INVISIBLE);
             }
         }
     }

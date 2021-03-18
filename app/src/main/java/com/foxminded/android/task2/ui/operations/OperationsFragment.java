@@ -19,6 +19,8 @@ import com.foxminded.android.task2.R;
 import com.foxminded.android.task2.databinding.FragmentCollectionsBinding;
 import com.foxminded.android.task2.dto.OperationItem;
 import com.foxminded.android.task2.model.CollectionsOperations;
+import com.foxminded.android.task2.model.MapsOperations;
+import com.foxminded.android.task2.model.Operations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,24 +29,36 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class CollectionsFragment extends Fragment {
-
-    private final CollectionsOperations collectionsOperations = new CollectionsOperations(BenchmarkApp.getInstance());
-    private RecyclerView mRecyclerView;
-    private final CollectionsRecyclerAdapter mAdapter = new CollectionsRecyclerAdapter();
+public class OperationsFragment extends Fragment {
+    private Operations operations;
     private FragmentCollectionsBinding mBinding;
+    private RecyclerView mRecyclerView;
+    private final OperationsAdapter mAdapter = new OperationsAdapter();
     private List<OperationItem> mCollectionsList;
     private ExecutorService mExecutorService;
+    private String fragmentName;
     private boolean isExecutionOn = false;
 
-    public static CollectionsFragment newInstance() {
-        return new CollectionsFragment();
+
+    public static OperationsFragment newInstance(String argument) {
+        OperationsFragment operationsFragment = new OperationsFragment();
+        Bundle args = new Bundle();
+        args.putString("FragmentName", argument);
+        operationsFragment.setArguments(args);
+        return operationsFragment;
     }
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentCollectionsBinding.inflate(inflater, container, false);
+        fragmentName = getArguments().getString("FragmentName");
+        if (fragmentName.equals("MapsFragment")) {
+            operations = new MapsOperations(BenchmarkApp.getInstance());
+        } else {
+            operations = new CollectionsOperations(BenchmarkApp.getInstance());
+        }
         return mBinding.getRoot();
     }
 
@@ -52,10 +66,10 @@ public class CollectionsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         mRecyclerView = mBinding.myRecyclerView;
         mRecyclerView.setHasFixedSize(true);
-        mCollectionsList = collectionsOperations.getOperations();
+        mCollectionsList = operations.getOperations();
         mAdapter.setItems(mCollectionsList);
 
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), collectionsOperations.getColumnCount()));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), operations.getColumnCount()));
         mRecyclerView.setAdapter(mAdapter);
 
         mBinding.startButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -77,38 +91,48 @@ public class CollectionsFragment extends Fragment {
                     startOfExecution();
                 }
             } else {
-                if(isExecutionOn){
+                if (isExecutionOn) {
                     forceShutdownExecution();
                 }
             }
-
         });
     }
 
-    private void forceShutdownExecution() {
-        Log.d("wtf", "Execution was forced to shutdown");
-        mExecutorService.shutdownNow();
-        isExecutionOn = false;
-        mBinding.startButton.setChecked(false);
-        Toast.makeText(getActivity(), getString(R.string.execution_shutdown), Toast.LENGTH_LONG).show();
-        List<OperationItem> operationItemList = new ArrayList<>(mAdapter.getItems());
-        for (OperationItem item : operationItemList) {
-            item.setOperationOn(false);
+    private void startOfOperationsList() {
+        Resources res = getResources();
+        String ms = getString(R.string.n_a_ms);
+        if (fragmentName == "MapsFragment") {
+            String[] operations = res.getStringArray(R.array.name_of_map_operations);
+            for (int i = 0; i < 6; i++) {
+                mCollectionsList.set(i, new OperationItem(operations[i], ms, true, i));
+            }
+        } else {
+            String[] operations = res.getStringArray(R.array.name_of_collections_operations);
+            for (int i = 0; i < 21; i++) {
+                mCollectionsList.set(i, new OperationItem(operations[i], ms, true, i));
+            }
         }
-        mAdapter.setItems(operationItemList);
+
+        mAdapter.setItems(mCollectionsList);
     }
 
     private void startOfExecution() {
+        Integer counterAmount;
+        if (fragmentName == "MapsFragment") {
+            counterAmount = 6;
+        } else {
+            counterAmount = 21;
+        }
         isExecutionOn = true;
         mExecutorService = Executors.newFixedThreadPool(Integer.parseInt(mBinding.editTextThreads.getText().toString()));
         final int amountOfElements = Integer.parseInt(mBinding.editTextOperations.getText().toString());
         AtomicInteger counter = new AtomicInteger(0);
-        for (OperationItem operation : collectionsOperations.getOperations()) {
+        for (OperationItem operation : operations.getOperations()) {
             mExecutorService.submit(() -> {
-                operation.setTime(Double.toString(collectionsOperations.measureTime(amountOfElements, operation)));
+                operation.setTime(Double.toString(operations.measureTime(amountOfElements, operation)));
                 mAdapter.setItem(operation.getNumber(), operation);
                 counter.getAndIncrement();
-                if (counter.get() == 21) {
+                if (counter.get() == counterAmount) {
                     getActivity().runOnUiThread(this::executionIsDone);
                     mExecutorService.shutdownNow();
                     try {
@@ -128,18 +152,21 @@ public class CollectionsFragment extends Fragment {
 
     private void executionIsDone() {
         isExecutionOn = false;
-        Toast.makeText(getActivity(),getString(R.string.execution_done), Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), getString(R.string.execution_done), Toast.LENGTH_LONG).show();
         mBinding.startButton.setChecked(false);
     }
 
-    private void startOfOperationsList() {
-        Resources res = getResources();
-        String[] operations = res.getStringArray(R.array.name_of_collections_operations);
-        String ms = getString(R.string.n_a_ms);
-        for (int i = 0; i < 21; i++) {
-            mCollectionsList.set(i, new OperationItem(operations[i], ms, true, i));
+    public void forceShutdownExecution() {
+        Log.d("wtf", "Execution was forced to shutdown");
+        mExecutorService.shutdownNow();
+        isExecutionOn = false;
+        mBinding.startButton.setChecked(false);
+        Toast.makeText(getActivity(), getString(R.string.execution_shutdown), Toast.LENGTH_LONG).show();
+        List<OperationItem> operationItemList = new ArrayList<>(mAdapter.getItems());
+        for (OperationItem item : operationItemList) {
+            item.setOperationOn(false);
         }
-        mAdapter.setItems(mCollectionsList);
+        mAdapter.setItems(operationItemList);
     }
 
 }

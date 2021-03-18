@@ -180,6 +180,6 @@ public class CollectionsOperations implements Operations {
 
 
         }
-        return (double) (endTime - startTime) / 1000000;
+        return (endTime - startTime) / 1000000.0;
     }
 }
