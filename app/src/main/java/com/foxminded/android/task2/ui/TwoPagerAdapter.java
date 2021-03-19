@@ -1,6 +1,6 @@
 package com.foxminded.android.task2.ui;
 
-import android.app.Application;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,12 +11,14 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import com.foxminded.android.task2.R;
 import com.foxminded.android.task2.ui.operations.OperationsFragment;
 
-public class MyPagerAdapter extends FragmentPagerAdapter {
+public class TwoPagerAdapter extends FragmentPagerAdapter {
+    private final Context mContext;
     private static final String MAPS_FRAGMENT = "MapsFragment";
     private static final String COLLECTIONS_FRAGMENT = "CollectionsFragment";
 
-    public MyPagerAdapter(@NonNull FragmentManager fm) {
+    public TwoPagerAdapter(@NonNull FragmentManager fm, Context context) {
         super(fm);
+        mContext = context;
     }
 
     @NonNull
@@ -42,9 +44,9 @@ public class MyPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         String title;
         if (position == 0) {
-            title = "Collections";
+            title = mContext.getString(R.string.collections);
         } else {
-            title = "Maps";
+            title = mContext.getString(R.string.maps);
         }
         return title;
     }
