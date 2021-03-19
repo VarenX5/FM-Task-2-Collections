@@ -9,6 +9,7 @@ import com.foxminded.android.task2.dto.OperationItem;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 public class MapsOperations implements Operations {
@@ -39,58 +40,40 @@ public class MapsOperations implements Operations {
     @Override
     public double measureTime(int amountOfElements, OperationItem operation) {
         long startTime = 0, endTime = 0;
-        int numOfOperation= operation.getNumber();
+        Map<Integer, Integer> operationsMap;
+
+        int numOfOperation = operation.getNumber();
         if ((numOfOperation == 0) | (numOfOperation == 2) | (numOfOperation == 4)) {
-
-            TreeMap<Integer, Integer> treeMap = new TreeMap<>();
-            for (int i = 0; i < amountOfElements; i++) {
-                treeMap.put(i, 150);
-            }
-            switch (numOfOperation) {
-                case 0:
-                    startTime = System.nanoTime();
-                    treeMap.put(1, 125);
-                    endTime = System.nanoTime();
-                    break;
-                case 2:
-                    startTime = System.nanoTime();
-                    boolean contain = treeMap.containsKey(amountOfElements / 2);
-                    endTime = System.nanoTime();
-                    break;
-                case 4:
-                    startTime = System.nanoTime();
-                    treeMap.remove(amountOfElements / 2);
-                    endTime = System.nanoTime();
-                    break;
-                default:
-                    throw new RuntimeException("We got a runtime exception");
-            }
+            operationsMap = new TreeMap<>();
         } else {
-            HashMap<Integer, Integer> hashMap = new HashMap<Integer, Integer>();
-            for (int i = 0; i < amountOfElements; i++) {
-                hashMap.put(i, 150);
-            }
-            switch (numOfOperation) {
-                case 1:
-                    startTime = System.nanoTime();
-                    hashMap.put(1, 125);
-                    endTime = System.nanoTime();
-                    break;
-                case 3:
-                    startTime = System.nanoTime();
-                    boolean contain = hashMap.containsKey(amountOfElements / 2);
-                    endTime = System.nanoTime();
-                    break;
-                case 5:
-                    startTime = System.nanoTime();
-                    hashMap.remove(amountOfElements / 2);
-                    endTime = System.nanoTime();
-                    break;
-                default:
-                    throw new RuntimeException("We got a runtime exception");
-
-            }
+            operationsMap = new HashMap<>();
         }
+        for (int i = 0; i < amountOfElements; i++) {
+            operationsMap.put(i, 150);
+        }
+        switch (numOfOperation) {
+            case 0:
+            case 1:
+                startTime = System.nanoTime();
+                operationsMap.put(0, 125);
+                endTime = System.nanoTime();
+                break;
+            case 2:
+            case 3:
+                startTime = System.nanoTime();
+                boolean contain = operationsMap.containsKey(amountOfElements / 2);
+                endTime = System.nanoTime();
+                break;
+            case 4:
+            case 5:
+                startTime = System.nanoTime();
+                operationsMap.remove(amountOfElements / 2);
+                endTime = System.nanoTime();
+                break;
+            default:
+                throw new RuntimeException("We got a runtime exception");
+        }
+
         return (endTime - startTime) / 1000000.0;
     }
 }

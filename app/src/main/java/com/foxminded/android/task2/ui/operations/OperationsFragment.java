@@ -30,35 +30,41 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class OperationsFragment extends Fragment {
+    private static final String MAPS_FRAGMENT = "MapsFragment";
+    private static final String FRAGMENT_NAME = "FragmentName";
+
     private Operations operations;
     private FragmentCollectionsBinding mBinding;
     private RecyclerView mRecyclerView;
     private final OperationsAdapter mAdapter = new OperationsAdapter();
     private List<OperationItem> mCollectionsList;
     private ExecutorService mExecutorService;
-    private String fragmentName;
     private boolean isExecutionOn = false;
 
 
     public static OperationsFragment newInstance(String argument) {
         OperationsFragment operationsFragment = new OperationsFragment();
         Bundle args = new Bundle();
-        args.putString("FragmentName", argument);
+        args.putString(FRAGMENT_NAME, argument);
         operationsFragment.setArguments(args);
         return operationsFragment;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        String fragmentName = getArguments().getString(FRAGMENT_NAME);
+        if (fragmentName.equals(MAPS_FRAGMENT)) {
+            operations = new MapsOperations(BenchmarkApp.getInstance());
+        } else {
+            operations = new CollectionsOperations(BenchmarkApp.getInstance());
+        }
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentCollectionsBinding.inflate(inflater, container, false);
-        fragmentName = getArguments().getString("FragmentName");
-        if (fragmentName.equals("MapsFragment")) {
-            operations = new MapsOperations(BenchmarkApp.getInstance());
-        } else {
-            operations = new CollectionsOperations(BenchmarkApp.getInstance());
-        }
         return mBinding.getRoot();
     }
 
@@ -101,7 +107,7 @@ public class OperationsFragment extends Fragment {
     private void startOfOperationsList() {
         Resources res = getResources();
         String ms = getString(R.string.n_a_ms);
-        if (fragmentName == "MapsFragment") {
+        if (operations.getColumnCount() == 2) {
             String[] operations = res.getStringArray(R.array.name_of_map_operations);
             for (int i = 0; i < 6; i++) {
                 mCollectionsList.set(i, new OperationItem(operations[i], ms, true, i));
@@ -118,7 +124,7 @@ public class OperationsFragment extends Fragment {
 
     private void startOfExecution() {
         Integer counterAmount;
-        if (fragmentName == "MapsFragment") {
+        if (operations.getColumnCount() == 2) {
             counterAmount = 6;
         } else {
             counterAmount = 21;

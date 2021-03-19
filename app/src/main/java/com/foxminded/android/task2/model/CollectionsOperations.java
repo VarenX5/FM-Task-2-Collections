@@ -39,146 +39,71 @@ public class CollectionsOperations implements Operations {
     @Override
     public double measureTime(int amountOfElements, OperationItem operation) {
         long startTime = 0, endTime = 0;
+        List<Integer> operationList;
         int numberOfOperation = operation.getNumber();
-        //int[] test = {0,3,6,9,12,15,18};
-        //int[] test2 = {1,4,7,10,13,16,19};
-        //int[] test3 = {2,5,8,11,14,17,20};
+
         if ((numberOfOperation == 0) | (numberOfOperation % 3 == 0)) {
-            ArrayList<Integer> arrayList = new ArrayList<>();
-            for (int i = 0; i < amountOfElements; i++) {
-                arrayList.add(i);
-            }
-            switch (numberOfOperation) {
-                case 0:
-                    startTime = System.nanoTime();
-                    arrayList.add(0, 150);
-                    endTime = System.nanoTime();
-                    break;
-                case 3:
-                    startTime = System.nanoTime();
-                    arrayList.add(amountOfElements / 2, 150);
-                    endTime = System.nanoTime();
-                    break;
-                case 6:
-                    startTime = System.nanoTime();
-                    arrayList.add(arrayList.size() - 1, 150);
-                    endTime = System.nanoTime();
-                    break;
-                case 9:
-                    startTime = System.nanoTime();
-                    arrayList.indexOf(arrayList.get(amountOfElements / 2));
-                    endTime = System.nanoTime();
-                    break;
-                case 12:
-                    startTime = System.nanoTime();
-                    arrayList.remove(0);
-                    endTime = System.nanoTime();
-                    break;
-                case 15:
-                    startTime = System.nanoTime();
-                    arrayList.remove(amountOfElements / 2);
-                    endTime = System.nanoTime();
-                    break;
-                case 18:
-                    startTime = System.nanoTime();
-                    arrayList.remove(arrayList.size() - 1);
-                    endTime = System.nanoTime();
-                    break;
-                default:
-                    throw new RuntimeException("We got a runtime exception");
-            }
-
+            operationList = new ArrayList<>();
         } else if ((numberOfOperation == 1) | (numberOfOperation == 4) | (numberOfOperation == 7) | (numberOfOperation == 10) | (numberOfOperation == 13) | (numberOfOperation == 16) | (numberOfOperation == 19)) {
-            LinkedList<Integer> linkedList = new LinkedList<>();
-            for (int i = 0; i < amountOfElements; i++) {
-                linkedList.add(i);
-            }
-            switch (numberOfOperation) {
-                case 1:
-                    startTime = System.nanoTime();
-                    linkedList.addFirst( 150);
-                    endTime = System.nanoTime();
-                    break;
-                case 4:
-                    startTime = System.nanoTime();
-                    linkedList.add(amountOfElements / 2, 150);
-                    endTime = System.nanoTime();
-                    break;
-                case 7:
-                    startTime = System.nanoTime();
-                    linkedList.addLast( 150);
-                    endTime = System.nanoTime();
-                    break;
-                case 10:
-                    startTime = System.nanoTime();
-                    linkedList.indexOf(linkedList.get(amountOfElements / 2));
-                    endTime = System.nanoTime();
-                    break;
-                case 13:
-                    startTime = System.nanoTime();
-                    linkedList.remove(0);
-                    endTime = System.nanoTime();
-                    break;
-                case 16:
-                    startTime = System.nanoTime();
-                    linkedList.remove(amountOfElements / 2);
-                    endTime = System.nanoTime();
-                    break;
-                case 19:
-                    startTime = System.nanoTime();
-                    linkedList.removeLast();
-                    endTime = System.nanoTime();
-                    break;
-                default:
-                    throw new RuntimeException("We got a runtime exception");
-            }
-
+            operationList = new LinkedList<>();
         } else {
-            CopyOnWriteArrayList<Integer> copyOnWriteArrayList = new CopyOnWriteArrayList<>();
-            for (int i = 0; i < amountOfElements; i++) {
-                copyOnWriteArrayList.add(i);
-            }
-            switch (numberOfOperation) {
-                case 2:
-                    startTime = System.nanoTime();
-                    copyOnWriteArrayList.add(0, 150);
-                    endTime = System.nanoTime();
-                    break;
-                case 5:
-                    startTime = System.nanoTime();
-                    copyOnWriteArrayList.add(amountOfElements / 2, 150);
-                    endTime = System.nanoTime();
-                    break;
-                case 8:
-                    startTime = System.nanoTime();
-                    copyOnWriteArrayList.add(copyOnWriteArrayList.size() - 1, 150);
-                    endTime = System.nanoTime();
-                    break;
-                case 11:
-                    startTime = System.nanoTime();
-                    copyOnWriteArrayList.indexOf(copyOnWriteArrayList.get(amountOfElements / 2));
-                    endTime = System.nanoTime();
-                    break;
-                case 14:
-                    startTime = System.nanoTime();
-                    copyOnWriteArrayList.remove(0);
-                    endTime = System.nanoTime();
-                    break;
-                case 17:
-                    startTime = System.nanoTime();
-                    copyOnWriteArrayList.remove(amountOfElements / 2);
-                    endTime = System.nanoTime();
-                    break;
-                case 20:
-                    startTime = System.nanoTime();
-                    copyOnWriteArrayList.remove(copyOnWriteArrayList.size() - 1);
-                    endTime = System.nanoTime();
-                    break;
-                default:
-                    throw new RuntimeException("We got a runtime exception");
-            }
-
-
+            operationList = new CopyOnWriteArrayList<>();
+        }
+        for (int i = 0; i < amountOfElements; i++) {
+            operationList.add(i);
+        }
+        switch (numberOfOperation) {
+            case 0:
+            case 1:
+            case 2:
+                startTime = System.nanoTime();
+                operationList.add(0, 150);
+                endTime = System.nanoTime();
+                break;
+            case 3:
+            case 4:
+            case 5:
+                startTime = System.nanoTime();
+                operationList.add(amountOfElements / 2, 150);
+                endTime = System.nanoTime();
+                break;
+            case 6:
+            case 7:
+            case 8:
+                startTime = System.nanoTime();
+                operationList.add(operationList.size() - 1, 150);
+                endTime = System.nanoTime();
+                break;
+            case 9:
+            case 10:
+            case 11:
+                startTime = System.nanoTime();
+                operationList.indexOf(operationList.get(amountOfElements / 2));
+                endTime = System.nanoTime();
+                break;
+            case 12:
+            case 13:
+            case 14:
+                startTime = System.nanoTime();
+                operationList.remove(0);
+                endTime = System.nanoTime();
+                break;
+            case 15:
+            case 16:
+            case 17:
+                startTime = System.nanoTime();
+                operationList.remove(amountOfElements / 2);
+                endTime = System.nanoTime();
+                break;
+            case 18:
+            case 19:
+            case 20:
+                startTime = System.nanoTime();
+                operationList.remove(operationList.size() - 1);
+                endTime = System.nanoTime();
+                break;
+            default:
+                throw new RuntimeException("We got a runtime exception");
         }
         return (endTime - startTime) / 1000000.0;
     }

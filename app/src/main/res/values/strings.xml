@@ -4,6 +4,8 @@
     <string name="tab_text_2">Tab 2</string>
     <string name="threads">Threads</string>
     <string name="operations">Operations</string>
+    <string name="collections">Collections</string>
+    <string name="maps">Maps</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="execution_done">Calculation is done</string>
