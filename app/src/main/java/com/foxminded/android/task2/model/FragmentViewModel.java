@@ -57,7 +57,6 @@ public class FragmentViewModel extends AndroidViewModel {
 
 
     public void startOfExecution(int amountOfThreads, int amountOfElements) {
-        Log.d("wtf", "Start of startOfExecution() from ModelView");
         startOfOperationsList();
         Integer counterAmount;
         if (mOperations.getColumnCount() == 2) {
@@ -68,15 +67,12 @@ public class FragmentViewModel extends AndroidViewModel {
         mExecutorService = Executors.newFixedThreadPool(amountOfThreads);
         AtomicInteger counter = new AtomicInteger(0);
         for (OperationItem operation : mOperations.getOperations()) {
-            Log.d("wtf", "Start of Cycle foreach");
             mExecutorService.submit(() -> {
                 operation.setTime(Double.toString(mOperations.measureTime(amountOfElements, operation)));
                 mOperationsList.set(operation.getNumber(), operation);
                 operationsLiveData.postValue(mOperationsList);
                 counter.getAndIncrement();
-                Log.d("wtf", "Counter = " + counter.get());
                 if (counter.get() == counterAmount) {
-                    Log.d("wtf", "Counter == " + counterAmount);
                     isExecutionOn.postValue(false);
                     toastText.postValue(mApplication.getString(R.string.execution_done));
                     mExecutorService.shutdownNow();

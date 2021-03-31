@@ -112,7 +112,6 @@ public class OperationsFragment extends Fragment {
                     mBinding.editTextThreads.setText("");
                     mBinding.startButton.setChecked(false);
                 } else {
-                    Log.d("wtf", "Start of mViewModel.startOfExecution()");
                     mViewModel.startOfExecution(Integer.parseInt(mBinding.editTextThreads.getText().toString()), Integer.parseInt(mBinding.editTextOperations.getText().toString()));
                 }
             } else {
