@@ -26,9 +26,11 @@ public class FragmentViewModel extends AndroidViewModel {
         super(application);
         mApplication = application;
         mOperations = operations;
-        operationsLiveData.setValue(mOperations.getOperations());
     }
 
+    public void setOperations(){
+        operationsLiveData.setValue(mOperations.getOperations());
+    }
     public MutableLiveData<List<OperationItem>> getCollectionsLiveData() {
         return operationsLiveData;
     }

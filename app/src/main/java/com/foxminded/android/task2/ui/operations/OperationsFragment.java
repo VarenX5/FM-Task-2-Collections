@@ -1,7 +1,6 @@
 package com.foxminded.android.task2.ui.operations;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +52,7 @@ public class OperationsFragment extends Fragment {
                 mAdapter.setItems(operationsList);
             }
         });
+        mViewModel.setOperations();
         mViewModel.getIsExecutionOnLiveData().observe(getActivity(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isExecutionOnLiveData) {
