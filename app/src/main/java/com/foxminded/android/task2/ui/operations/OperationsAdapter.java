@@ -67,15 +67,7 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Co
         public void bindItem(OperationItem item) {
             String itemText = item.getName() + item.getTime();
             mTextView.setText(itemText);
-            if (item.isOperationOn()) {
-                mProgressBar.animate()
-                        .alpha(1.0f)
-                        .setDuration(1500);
-            } else {
-                mProgressBar.animate()
-                        .alpha(0.0f)
-                        .setDuration(1500);
-            }
+            mProgressBar.animate().alpha(item.isOperationOn() ? 1.0f : 0F).setDuration(1500);
         }
     }
 }

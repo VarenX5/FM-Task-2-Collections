@@ -25,12 +25,12 @@ import java.util.List;
 import java.util.Objects;
 
 public class OperationsFragment extends Fragment {
+    public static final String MAPS_FRAGMENT = "MapsFragment";
     private static final String FRAGMENT_NAME = "FragmentName";
     private FragmentViewModel mViewModel;
     private FragmentCollectionsBinding mBinding;
     private RecyclerView mRecyclerView;
     private final OperationsAdapter mAdapter = new OperationsAdapter();
-    private boolean isExecutionOn = false;
 
 
     public static OperationsFragment newInstance(String argument) {
@@ -56,8 +56,7 @@ public class OperationsFragment extends Fragment {
         mViewModel.getIsExecutionOnLiveData().observe(getActivity(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isExecutionOnLiveData) {
-                isExecutionOn = isExecutionOnLiveData;
-                if (!isExecutionOn) {
+                if (!isExecutionOnLiveData) {
                     mBinding.startButton.setChecked(false);
                 }
             }
@@ -83,14 +82,13 @@ public class OperationsFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), mViewModel.getColumnCount()));
         mRecyclerView.setAdapter(mAdapter);
-        mBinding.startButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                mViewModel.validateAndStart(mBinding.editTextThreads.getText().toString().trim(), mBinding.editTextOperations.getText().toString().trim());
-            } else {
-                mViewModel.forceShutdownExecution();
-            }
-        });
+        mBinding.startButton.setOnCheckedChangeListener((buttonView, isChecked) -> mViewModel.validateAndStart(getThreadsText(), getOperationsText(), isChecked));
     }
-
+    private String getThreadsText(){
+        return mBinding.editTextThreads.getText().toString().trim();
+    }
+    private String getOperationsText(){
+        return mBinding.editTextOperations.getText().toString().trim();
+    }
 
 }
