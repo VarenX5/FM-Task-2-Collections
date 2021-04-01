@@ -100,16 +100,12 @@ public class FragmentViewModel extends AndroidViewModel {
         if (mExecutorService==null) {
             return;
         }
-        if(isHidden){
-            mExecutorService.shutdownNow();
-            mExecutorService = null;
-            isExecutionOn.postValue(false);
-        } else {
+        mExecutorService.shutdownNow();
+        mExecutorService = null;
+        isExecutionOn.postValue(false);
+        if(!isHidden) {
             toastText.setValue(mApplication.getString(R.string.execution_shutdown));
-            mExecutorService.shutdownNow();
-            mExecutorService = null;
             setProgressVisibility(false);
-            isExecutionOn.setValue(false);
         }
 
     }
