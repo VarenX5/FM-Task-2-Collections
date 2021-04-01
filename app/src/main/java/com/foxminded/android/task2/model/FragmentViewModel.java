@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.foxminded.android.task2.R;
 import com.foxminded.android.task2.dto.OperationItem;
@@ -14,17 +15,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class FragmentViewModel extends AndroidViewModel {
+public class FragmentViewModel extends ViewModel {
     private final MutableLiveData<List<OperationItem>> operationsLiveData = new MutableLiveData<>();
     private MutableLiveData<Boolean> isExecutionOn = new MutableLiveData<>();
-    private MutableLiveData<String> toastText = new MutableLiveData<>();
+    private MutableLiveData<Integer> toastText = new MutableLiveData<>();
     private final Operations mOperations;
     private ExecutorService mExecutorService;
-    private final Application mApplication;
 
-    public FragmentViewModel(@NonNull Application application, Operations operations) {
-        super(application);
-        mApplication = application;
+    public FragmentViewModel(Operations operations) {
+        super();
         mOperations = operations;
     }
 
@@ -39,7 +38,7 @@ public class FragmentViewModel extends AndroidViewModel {
         return isExecutionOn;
     }
 
-    public MutableLiveData<String> getToastText() {
+    public MutableLiveData<Integer> getToastText() {
         return toastText;
     }
 
@@ -47,22 +46,22 @@ public class FragmentViewModel extends AndroidViewModel {
         return mOperations.getColumnCount();
 
     }
-    public void validateAndStart(String amountOfThreadsString, String amountOfElementsString, Boolean isChecked) {
+    public void validateAndStart(String amountOfThreadsString, String amountOfElementsString, boolean isChecked) {
         if(isChecked){
             if(mExecutorService!=null){
                 return;
             }
             if (amountOfElementsString.equals("0") || amountOfElementsString.isEmpty()) {
-                toastText.setValue(mApplication.getString(R.string.message_need_more_than_zero_operations));
+                toastText.setValue(R.string.message_need_more_than_zero_operations);
                 isExecutionOn.setValue(false);
             } else if (amountOfThreadsString.equals("0") || amountOfThreadsString.isEmpty()) {
-                toastText.setValue(mApplication.getString(R.string.message_need_more_than_zero_threads));
+                toastText.setValue(R.string.message_need_more_than_zero_threads);
                 isExecutionOn.setValue(false);
             } else {
                 startOfExecution(Integer.parseInt(amountOfThreadsString), Integer.parseInt(amountOfElementsString));
             }
         } else {
-            forceShutdownExecution(false);
+            forceShutdownExecution(true);
         }
 
 
@@ -82,15 +81,15 @@ public class FragmentViewModel extends AndroidViewModel {
                 counter.getAndIncrement();
                 if (counter.get() == counterAmount) {
                     isExecutionOn.postValue(false);
-                    toastText.postValue(mApplication.getString(R.string.execution_done));
-                    forceShutdownExecution(true);
+                    toastText.postValue(R.string.execution_done);
+                    forceShutdownExecution(false);
                 }
             });
 
         }
     }
 
-    private void setProgressVisibility(Boolean isVisible) {
+    private void setProgressVisibility(boolean isVisible) {
         List<OperationItem> mOperationsList = operationsLiveData.getValue();
         for (OperationItem item : mOperationsList) {
             item.setOperationOn(isVisible);
@@ -98,15 +97,16 @@ public class FragmentViewModel extends AndroidViewModel {
         operationsLiveData.setValue(mOperationsList);
     }
 
-    public void forceShutdownExecution(Boolean isHidden) {
+    public void forceShutdownExecution(boolean forceStop) {
         if (mExecutorService==null) {
             return;
         }
         mExecutorService.shutdownNow();
         mExecutorService = null;
         isExecutionOn.postValue(false);
-        if(!isHidden) {
-            toastText.setValue(mApplication.getString(R.string.execution_shutdown));
+
+        if(forceStop) {
+            toastText.setValue(R.string.execution_shutdown);
             setProgressVisibility(false);
         }
 

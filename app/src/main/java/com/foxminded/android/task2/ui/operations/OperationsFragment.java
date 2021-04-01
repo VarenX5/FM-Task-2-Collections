@@ -61,10 +61,10 @@ public class OperationsFragment extends Fragment {
                 }
             }
         });
-        mViewModel.getToastText().observe(getActivity(), new Observer<String>() {
+        mViewModel.getToastText().observe(getActivity(), new Observer<Integer>() {
             @Override
-            public void onChanged(String toastText) {
-                Toast.makeText(getActivity(), toastText, Toast.LENGTH_LONG).show();
+            public void onChanged(Integer toastString) {
+                Toast.makeText(getActivity(), getString(toastString), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -82,12 +82,12 @@ public class OperationsFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), mViewModel.getColumnCount()));
         mRecyclerView.setAdapter(mAdapter);
-        mBinding.startButton.setOnCheckedChangeListener((buttonView, isChecked) -> mViewModel.validateAndStart(getThreadsText(), getOperationsText(), isChecked));
+        mBinding.startButton.setOnCheckedChangeListener((buttonView, isChecked) -> mViewModel.validateAndStart(getThreadsTextFromInput(), getOperationsTextFromInput(), isChecked));
     }
-    private String getThreadsText(){
+    private String getThreadsTextFromInput(){
         return mBinding.editTextThreads.getText().toString().trim();
     }
-    private String getOperationsText(){
+    private String getOperationsTextFromInput(){
         return mBinding.editTextOperations.getText().toString().trim();
     }
 

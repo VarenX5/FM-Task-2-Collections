@@ -35,7 +35,7 @@ public class FragmentViewModelFactory extends ViewModelProvider.AndroidViewModel
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        return (T) new FragmentViewModel(mApplication, mOperations);
+        return (T) new FragmentViewModel(mOperations);
     }
 
 
