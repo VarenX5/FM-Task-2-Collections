@@ -1,7 +1,6 @@
 package com.foxminded.android.task2.model;
 
 import android.app.Application;
-import android.content.res.Resources;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -11,7 +10,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.foxminded.android.task2.R;
 import com.foxminded.android.task2.dto.OperationItem;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,8 +17,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class FragmentViewModel extends AndroidViewModel {
-    private List<OperationItem> mOperationsList = new ArrayList<>();
-    private MutableLiveData<List<OperationItem>> operationsLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<OperationItem>> operationsLiveData = new MutableLiveData<>();
     private MutableLiveData<Boolean> isExecutionOn = new MutableLiveData<>();
     private MutableLiveData<String> toastText = new MutableLiveData<>();
     private final Operations mOperations;
@@ -31,12 +28,7 @@ public class FragmentViewModel extends AndroidViewModel {
         super(application);
         mApplication = application;
         mOperations = operations;
-        init();
-    }
-
-    public void init() {
-        mOperationsList = mOperations.getOperations();
-        operationsLiveData.setValue(mOperationsList);
+        operationsLiveData.setValue(mOperations.getOperations());
     }
 
     public MutableLiveData<List<OperationItem>> getCollectionsLiveData() {
@@ -53,12 +45,30 @@ public class FragmentViewModel extends AndroidViewModel {
 
     public int getColumnCount() {
         return mOperations.getColumnCount();
+
     }
 
+    public void validateAndStart(String amountOfThreadsString, String amountOfElementsString) {
+        if (isExecutionOn.getValue() != null) {
+            if (isExecutionOn.getValue()) {
+                return;
+            }
+        }
+        if (amountOfElementsString.equals("0") || amountOfElementsString.isEmpty()) {
+            toastText.setValue(mApplication.getApplicationContext().getString(R.string.message_need_more_than_zero_operations));
+            isExecutionOn.setValue(false);
+        } else if (amountOfThreadsString.equals("0") || amountOfThreadsString.isEmpty()) {
+            toastText.setValue(mApplication.getApplicationContext().getString(R.string.message_need_more_than_zero_threads));
+            isExecutionOn.setValue(false);
+        } else {
+            startOfExecution(Integer.parseInt(amountOfThreadsString), Integer.parseInt(amountOfElementsString));
+        }
+    }
 
     public void startOfExecution(int amountOfThreads, int amountOfElements) {
+        isExecutionOn.setValue(true);
         startOfOperationsList();
-        Integer counterAmount;
+        int counterAmount;
         if (mOperations.getColumnCount() == 2) {
             counterAmount = 6;
         } else {
@@ -66,21 +76,21 @@ public class FragmentViewModel extends AndroidViewModel {
         }
         mExecutorService = Executors.newFixedThreadPool(amountOfThreads);
         AtomicInteger counter = new AtomicInteger(0);
-        for (OperationItem operation : mOperations.getOperations()) {
+        List<OperationItem> mOperationsList = operationsLiveData.getValue();
+        for (OperationItem operation : mOperationsList) {
             mExecutorService.submit(() -> {
                 operation.setTime(Double.toString(mOperations.measureTime(amountOfElements, operation)));
-                mOperationsList.set(operation.getNumber(), operation);
+                operation.setOperationOn(false);
                 operationsLiveData.postValue(mOperationsList);
                 counter.getAndIncrement();
                 if (counter.get() == counterAmount) {
                     isExecutionOn.postValue(false);
                     toastText.postValue(mApplication.getString(R.string.execution_done));
-                    mExecutorService.shutdownNow();
+                    mExecutorService.shutdown();
                     try {
                         if (!mExecutorService.awaitTermination(60, TimeUnit.MILLISECONDS)) {
                             mExecutorService.shutdownNow();
-                            if (!mExecutorService.awaitTermination(60, TimeUnit.SECONDS))
-                                System.err.println("Pool did not terminate");
+                            mExecutorService = null;
                         }
                     } catch (InterruptedException e) {
                         mExecutorService.shutdownNow();
@@ -92,26 +102,21 @@ public class FragmentViewModel extends AndroidViewModel {
     }
 
     private void startOfOperationsList() {
-        Resources res = mApplication.getResources();
-        String ms = mApplication.getString(R.string.n_a_ms);
-        if (mOperations.getColumnCount() == 2) {
-            String[] operations = res.getStringArray(R.array.name_of_map_operations);
-            for (int i = 0; i < 6; i++) {
-                mOperationsList.set(i, new OperationItem(operations[i], ms, true, i));
-            }
-        } else {
-            String[] operations = res.getStringArray(R.array.name_of_collections_operations);
-            for (int i = 0; i < 21; i++) {
-                mOperationsList.set(i, new OperationItem(operations[i], ms, true, i));
-            }
+        List<OperationItem> mOperationsList = operationsLiveData.getValue();
+        for (OperationItem item : mOperationsList) {
+            item.setOperationOn(true);
         }
-        isExecutionOn.setValue(true);
         operationsLiveData.setValue(mOperationsList);
     }
 
     public void forceShutdownExecution() {
+        if (!isExecutionOn.getValue()) {
+            return;
+        }
+        List<OperationItem> mOperationsList = operationsLiveData.getValue();
         toastText.setValue(mApplication.getString(R.string.execution_shutdown));
         mExecutorService.shutdownNow();
+        mExecutorService = null;
         for (OperationItem item : mOperationsList) {
             item.setOperationOn(false);
         }

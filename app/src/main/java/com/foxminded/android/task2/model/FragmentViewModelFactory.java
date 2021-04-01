@@ -7,7 +7,10 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.foxminded.android.task2.BenchmarkApp;
+
 public class FragmentViewModelFactory extends ViewModelProvider.AndroidViewModelFactory {
+    private static final String MAPS_FRAGMENT = "MapsFragment";
     private final Operations mOperations;
     private final Application mApplication;
 
@@ -16,9 +19,13 @@ public class FragmentViewModelFactory extends ViewModelProvider.AndroidViewModel
      *
      * @param application an application to pass in {@link AndroidViewModel}
      */
-    public FragmentViewModelFactory(@NonNull Application application, Operations operations) {
+    public FragmentViewModelFactory(@NonNull Application application, String fragmentName) {
         super(application);
-        mOperations = operations;
+        if (fragmentName.equals(MAPS_FRAGMENT)) {
+            mOperations = new MapsOperations(BenchmarkApp.getInstance());
+        } else {
+            mOperations = new CollectionsOperations(BenchmarkApp.getInstance());
+        }
         mApplication = application;
     }
 
