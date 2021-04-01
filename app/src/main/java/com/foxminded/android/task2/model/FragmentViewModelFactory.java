@@ -15,7 +15,6 @@ import java.lang.invoke.ConstantCallSite;
 
 public class FragmentViewModelFactory extends ViewModelProvider.AndroidViewModelFactory {
     private final Operations mOperations;
-    private final Application mApplication;
 
     /**
      * Creates a {@code AndroidViewModelFactory}
@@ -29,7 +28,6 @@ public class FragmentViewModelFactory extends ViewModelProvider.AndroidViewModel
         } else {
             mOperations = new CollectionsOperations(application);
         }
-        mApplication = application;
     }
 
     @NonNull
