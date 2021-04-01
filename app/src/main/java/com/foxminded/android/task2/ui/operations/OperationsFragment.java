@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -82,13 +83,11 @@ public class OperationsFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), mViewModel.getColumnCount()));
         mRecyclerView.setAdapter(mAdapter);
-        mBinding.startButton.setOnCheckedChangeListener((buttonView, isChecked) -> mViewModel.validateAndStart(getThreadsTextFromInput(), getOperationsTextFromInput(), isChecked));
+        mBinding.startButton.setOnCheckedChangeListener((buttonView, isChecked) -> mViewModel.validateAndStart(getTextFromInput(mBinding.editTextThreads), getTextFromInput(mBinding.editTextOperations), isChecked));
     }
-    private String getThreadsTextFromInput(){
-        return mBinding.editTextThreads.getText().toString().trim();
-    }
-    private String getOperationsTextFromInput(){
-        return mBinding.editTextOperations.getText().toString().trim();
+
+    private String getTextFromInput(EditText editText){
+        return editText.getText().toString().trim();
     }
 
 }
