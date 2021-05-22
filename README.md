@@ -21,6 +21,8 @@ removing.
 
 The entire table must be asynchronous, each operation must be performed on a separate thread. 
 
+Architecture - MVVM.
+
 Task 2.1(in current dev brench):
 
 Change in technology stack:
