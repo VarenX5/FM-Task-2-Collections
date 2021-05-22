@@ -8,4 +8,4 @@ Architecture pattern - MVP;
 
 RxJava2 + RxAndroid;
 
-Dagger 2;
+Dagger 2 (not ready);
