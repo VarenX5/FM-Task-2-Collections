@@ -18,18 +18,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.foxminded.android.task2.databinding.FragmentCollectionsBinding;
 import com.foxminded.android.task2.dto.OperationItem;
-import com.foxminded.android.task2.model.FragmentViewModelFactory;
-import com.foxminded.android.task2.model.FragmentViewModel;
 
 import java.util.List;
 import java.util.Objects;
 
-public class OperationsFragment extends Fragment {
+public class OperationsFragment extends Fragment implements OperationsContracter.FragmentViewInterface{
     public static final String MAPS_FRAGMENT = "MapsFragment";
     private static final String FRAGMENT_NAME = "FragmentName";
-    private FragmentViewModel mViewModel;
+    private OperationsPresenter mOperationsPresenter;
     private FragmentCollectionsBinding mBinding;
-    private RecyclerView mRecyclerView;
     private final OperationsAdapter mAdapter = new OperationsAdapter();
 
 
@@ -44,30 +41,8 @@ public class OperationsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String fragmentName = getArguments().getString(FRAGMENT_NAME);
-
-        mViewModel = new ViewModelProvider(this, new FragmentViewModelFactory(Objects.requireNonNull(getActivity()).getApplication(), fragmentName)).get(FragmentViewModel.class);
-        mViewModel.getCollectionsLiveData().observe(getActivity(), new Observer<List<OperationItem>>() {
-            @Override
-            public void onChanged(List<OperationItem> operationsList) {
-                mAdapter.setItems(operationsList);
-            }
-        });
-        mViewModel.setOperations();
-        mViewModel.getIsExecutionOnLiveData().observe(getActivity(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean isExecutionOnLiveData) {
-                if (!isExecutionOnLiveData) {
-                    mBinding.startButton.setChecked(false);
-                }
-            }
-        });
-        mViewModel.getToastText().observe(getActivity(), new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer toastString) {
-                Toast.makeText(getActivity(), getString(toastString), Toast.LENGTH_LONG).show();
-            }
-        });
+        mOperationsPresenter = new OperationsPresenter(this, getArguments().getString(FRAGMENT_NAME));
+        mOperationsPresenter.setStartItems();
     }
 
     @Nullable
@@ -79,15 +54,41 @@ public class OperationsFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        mRecyclerView = mBinding.myRecyclerView;
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), mViewModel.getColumnCount()));
-        mRecyclerView.setAdapter(mAdapter);
-        mBinding.startButton.setOnCheckedChangeListener((buttonView, isChecked) -> mViewModel.validateAndStart(getTextFromInput(mBinding.editTextThreads), getTextFromInput(mBinding.editTextOperations), isChecked));
+        RecyclerView recyclerView = mBinding.myRecyclerView;
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), mOperationsPresenter.getColumnCount()));
+        recyclerView.setAdapter(mAdapter);
+        mBinding.startButton.setOnCheckedChangeListener((buttonView, isChecked) -> mOperationsPresenter.validateAndStart(getTextFromInput(mBinding.editTextThreads), getTextFromInput(mBinding.editTextOperations), isChecked));
     }
 
-    private String getTextFromInput(EditText editText){
+    private String getTextFromInput(EditText editText) {
         return editText.getText().toString().trim();
     }
 
+
+    @Override
+    public void setItems(List<OperationItem> items) {
+        mAdapter.setItems(items);
+    }
+
+    @Override
+    public void setItem( OperationItem item) {
+        mAdapter.setItem(item.getNumber(), item);
+    }
+
+    @Override
+    public void setButtonChecked(boolean isChecked) {
+        mBinding.startButton.setChecked(isChecked);
+    }
+
+    @Override
+    public void showToastText(int text) {
+        Toast.makeText(getActivity(),getString(text),Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mOperationsPresenter.onDestroy();
+    }
 }
