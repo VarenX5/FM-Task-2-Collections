@@ -1,4 +1,4 @@
-# FoxMinded-Task-2-Collections
+# FoxMinded-Task-2-Collections (Android, Java)
 Task 2: 
 
 Create an application running various operations on Collections and Maps, calculate and display the average execution time of these operations (time in milliseconds). App should have an input field for the size of each collection and for the amount of the threads. 
